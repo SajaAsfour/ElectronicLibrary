@@ -17,6 +17,8 @@ builder.Services.AddApplicationServices();
 var app = builder.Build();
 
 
+app.UseGlobalExceptionHandling();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
