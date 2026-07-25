@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ElectronicLibrary.BLL.Constants;
 
-namespace ElectronicLibrary.BLL.Constants
+public static class ApplicationRoles
 {
-    internal class ApplicationRoles
-    {
-    }
+    public const string Admin = "Admin";
+
+    public const string Customer = "Customer";
+
+    public const string Seller = "Seller";
+
+    public static readonly string[] All =
+    [
+        Admin,
+        Customer,
+        Seller
+    ];
 }
