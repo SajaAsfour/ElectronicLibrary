@@ -1,12 +1,236 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ElectronicLibrary.BLL.Constants;
+using ElectronicLibrary.BLL.Interfaces.Authentication;
+using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
+using ElectronicLibrary.DAL.DTOs.Responses;
+using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
+using ElectronicLibrary.DAL.Models.Identity;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace ElectronicLibrary.BLL.Services.Authentication
+namespace ElectronicLibrary.BLL.Services.Authentication;
+
+public class AuthenticationService : IAuthenticationService
 {
-    internal class AuthenticationService
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ITokenService _tokenService;
+
+    public AuthenticationService(
+        UserManager<ApplicationUser> userManager,
+        ITokenService tokenService)
     {
+        _userManager = userManager;
+        _tokenService = tokenService;
+    }
+
+    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request)
+    {
+        var existingUser = await _userManager.FindByEmailAsync(request.Email);
+
+        if (existingUser is not null)
+        {
+            throw new InvalidOperationException(
+                "A user with this email already exists.");
+        }
+
+        var user = new ApplicationUser
+        {
+            FullName = request.FullName.Trim(),
+            Email = request.Email.Trim(),
+            UserName = request.Email.Trim(),
+            City = request.City?.Trim(),
+            Address = request.Address?.Trim(),
+            EmailConfirmed = true
+        };
+
+        var createResult = await _userManager.CreateAsync(user,request.Password);
+
+        if (!createResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(
+                    createResult.Errors));
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(
+                user,
+                ApplicationRoles.Customer);
+
+        if (!roleResult.Succeeded)
+        {
+            await _userManager.DeleteAsync(user);
+
+            throw new InvalidOperationException(
+                FormatIdentityErrors(
+                    roleResult.Errors));
+        }
+
+        return await CreateAuthenticationResponseAsync(
+            user);
+    }
+
+    public async Task<AuthenticationResponse> LoginAsync(LoginRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user is null)
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid email or password.");
+        }
+
+        var isPasswordValid =
+            await _userManager.CheckPasswordAsync(
+                user,
+                request.Password);
+
+        if (!isPasswordValid)
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid email or password.");
+        }
+
+        return await CreateAuthenticationResponseAsync(
+            user);
+    }
+
+    public async Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    {
+        ClaimsPrincipal principal;
+
+        try
+        {
+            principal =
+                _tokenService
+                    .GetPrincipalFromExpiredToken(
+                        request.AccessToken);
+        }
+        catch
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid access token.");
+        }
+
+        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid access token.");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            throw new UnauthorizedAccessException(
+                "User was not found.");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.RefreshTokenHash))
+        {
+            throw new UnauthorizedAccessException(
+                "Refresh token is not available.");
+        }
+
+        if (user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            throw new UnauthorizedAccessException(
+                "Refresh token has expired.");
+        }
+
+        var receivedRefreshTokenHash =
+            HashRefreshToken(
+                request.RefreshToken);
+
+        if (!CryptographicOperations.FixedTimeEquals(
+                Convert.FromBase64String(
+                    user.RefreshTokenHash),
+                Convert.FromBase64String(
+                    receivedRefreshTokenHash)))
+        {
+            throw new UnauthorizedAccessException(
+                "Invalid refresh token.");
+        }
+
+        return await CreateAuthenticationResponseAsync(user);
+    }
+
+    public async Task LogoutAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            return;
+        }
+
+        user.RefreshTokenHash = null;
+        user.RefreshTokenExpiryTime = null;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(
+                    result.Errors));
+        }
+    }
+
+    private async Task<AuthenticationResponse>CreateAuthenticationResponseAsync(ApplicationUser user)
+    {
+        var accessToken = await _tokenService.CreateAccessTokenAsync(user);
+
+        var refreshToken = _tokenService.CreateRefreshToken();
+
+        var accessTokenExpiration =_tokenService.GetAccessTokenExpirationTime();
+
+        var refreshTokenExpiration = _tokenService.GetRefreshTokenExpirationTime();
+
+        user.RefreshTokenHash = HashRefreshToken(refreshToken);
+
+        user.RefreshTokenExpiryTime = refreshTokenExpiration;
+
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(
+                    updateResult.Errors));
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new AuthenticationResponse
+        {
+            UserId = user.Id,
+            FullName = user.FullName,
+            Email = user.Email ?? string.Empty,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken,
+            AccessTokenExpiresAt = accessTokenExpiration,
+            RefreshTokenExpiresAt = refreshTokenExpiration,
+            Roles = roles.ToList()
+        };
+    }
+
+    private static string HashRefreshToken(string refreshToken)
+    {
+        var tokenBytes = Encoding.UTF8.GetBytes(refreshToken);
+
+        var hashBytes = SHA256.HashData(tokenBytes);
+
+        return Convert.ToBase64String(hashBytes);
+    }
+
+    private static string FormatIdentityErrors(IEnumerable<IdentityError> errors)
+    {
+        return string.Join(
+            Environment.NewLine,
+            errors.Select(error =>
+                $"{error.Code}: {error.Description}"));
     }
 }
