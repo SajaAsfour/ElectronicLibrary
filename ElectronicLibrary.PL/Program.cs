@@ -1,4 +1,6 @@
 
+using ElectronicLibrary.PL.Extensions;
+
 namespace ElectronicLibrary.PL
 {
     public class Program
@@ -12,6 +14,7 @@ namespace ElectronicLibrary.PL
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddDatabaseServices(builder.Configuration);
 
             var app = builder.Build();
 
