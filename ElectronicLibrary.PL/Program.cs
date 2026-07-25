@@ -6,13 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddDatabaseServices(
-    builder.Configuration);
+builder.Services.AddDatabaseServices(builder.Configuration);
 
 builder.Services.AddIdentityServices();
 
-builder.Services.AddJwtAuthenticationServices(
-    builder.Configuration);
+builder.Services.AddJwtAuthenticationServices(builder.Configuration);
+
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
