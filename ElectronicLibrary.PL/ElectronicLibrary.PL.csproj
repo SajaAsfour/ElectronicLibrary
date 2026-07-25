@@ -14,8 +14,4 @@
     <ProjectReference Include="..\ElectronicLibrary.BLL\ElectronicLibrary.BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>

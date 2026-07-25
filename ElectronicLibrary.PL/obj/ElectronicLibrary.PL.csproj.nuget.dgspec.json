@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj": {}
+    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj": {}
   },
   "projects": {
-    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj": {
+    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj",
         "projectName": "ElectronicLibrary.BLL",
-        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj",
+        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -30,11 +30,10 @@
         },
         "frameworks": {
           "net9.0": {
-            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj": {
-                "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj"
+              "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj": {
+                "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj"
               }
             }
           }
@@ -53,7 +52,6 @@
       },
       "frameworks": {
         "net9.0": {
-          "framework": "net9.0",
           "targetAlias": "net9.0",
           "imports": [
             "net461",
@@ -89,14 +87,14 @@
         }
       }
     },
-    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj": {
+    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj",
         "projectName": "ElectronicLibrary.DAL",
-        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj",
+        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\ElectronicLibrary.DAL.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.DAL\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -115,7 +113,6 @@
         },
         "frameworks": {
           "net9.0": {
-            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {}
           }
@@ -134,7 +131,6 @@
       },
       "frameworks": {
         "net9.0": {
-          "framework": "net9.0",
           "targetAlias": "net9.0",
           "imports": [
             "net461",
@@ -170,14 +166,14 @@
         }
       }
     },
-    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj": {
+    "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
+        "projectUniqueName": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
         "projectName": "ElectronicLibrary.PL",
-        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
+        "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
         "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.PL\\obj\\",
+        "outputPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -196,11 +192,10 @@
         },
         "frameworks": {
           "net9.0": {
-            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj": {
-                "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary.PL\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj"
+              "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj": {
+                "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.BLL\\ElectronicLibrary.BLL.csproj"
               }
             }
           }
@@ -219,7 +214,6 @@
       },
       "frameworks": {
         "net9.0": {
-          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
