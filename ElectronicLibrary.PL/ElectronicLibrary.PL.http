@@ -1,0 +1,6 @@
+@ElectronicLibrary.PL_HostAddress = http://localhost:5047
+
+GET {{ElectronicLibrary.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
