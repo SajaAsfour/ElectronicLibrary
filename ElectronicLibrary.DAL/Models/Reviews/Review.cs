@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Reviews
 {
-    internal class Review
+    public class Review
     {
     }
 }

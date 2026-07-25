@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElectronicLibrary.DAL.Enums
+﻿public enum PaymentStatus
 {
-    internal class PaymentStatus
-    {
-    }
+    Pending = 1,
+    Paid = 2,
+    Failed = 3,
+    Refunded = 4
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Orders
 {
-    internal class OrderItem
+    public class OrderItem
     {
     }
 }

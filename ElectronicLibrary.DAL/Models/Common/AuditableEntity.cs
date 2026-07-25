@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ElectronicLibrary.DAL.Models.Common;
 
-namespace ElectronicLibrary.DAL.Models.Common
+public abstract class AuditableEntity : BaseEntity
 {
-    internal class AuditableEntity
-    {
-    }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public string? CreatedById { get; set; }
+
+    public string? UpdatedById { get; set; }
 }

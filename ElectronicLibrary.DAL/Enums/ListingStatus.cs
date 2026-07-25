@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElectronicLibrary.DAL.Enums
+﻿public enum ListingStatus
 {
-    internal class ListingStatus
-    {
-    }
+    Draft = 1,
+    PendingApproval = 2,
+    Active = 3,
+    OutOfStock = 4,
+    Suspended = 5,
+    Rejected = 6
 }

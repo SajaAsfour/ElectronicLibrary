@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Marketplace
 {
-    internal class Listing
+    public class Listing
     {
     }
 }

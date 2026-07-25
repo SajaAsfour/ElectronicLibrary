@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElectronicLibrary.DAL.Enums
+﻿public enum BookFormat
 {
-    internal class BookFormat
-    {
-    }
+    Physical = 1,
+    Digital = 2,
+    Audio = 3
 }

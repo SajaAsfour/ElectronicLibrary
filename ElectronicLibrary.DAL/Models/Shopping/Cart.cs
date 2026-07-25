@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Shopping
 {
-    internal class Cart
+    public class Cart
     {
     }
 }

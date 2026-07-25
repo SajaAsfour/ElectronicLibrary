@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ElectronicLibrary.DAL.Enums
+﻿public enum BookCondition
 {
-    internal class BookCondition
-    {
-    }
+    New = 1,
+    LikeNew = 2,
+    Good = 3,
+    Acceptable = 4,
+    Used = 5
 }
