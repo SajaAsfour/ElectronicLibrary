@@ -1,4 +1,6 @@
-﻿public enum BookCondition
+﻿namespace ElectronicLibrary.DAL.Enums;
+
+public enum BookCondition
 {
     New = 1,
     LikeNew = 2,

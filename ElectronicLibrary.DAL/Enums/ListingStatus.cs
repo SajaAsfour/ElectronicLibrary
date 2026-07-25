@@ -1,9 +1,9 @@
-﻿public enum ListingStatus
+﻿namespace ElectronicLibrary.DAL.Enums;
+
+public enum ListingStatus
 {
     Draft = 1,
-    PendingApproval = 2,
-    Active = 3,
-    OutOfStock = 4,
-    Suspended = 5,
-    Rejected = 6
+    Active = 2,
+    OutOfStock = 3,
+    Suspended = 4
 }

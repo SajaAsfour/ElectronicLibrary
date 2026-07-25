@@ -1,4 +1,5 @@
-﻿using ElectronicLibrary.DAL.Models.Catalog;
+﻿using ElectronicLibrary.DAL.Enums;
+using ElectronicLibrary.DAL.Models.Catalog;
 using ElectronicLibrary.DAL.Models.Orders;
 using ElectronicLibrary.DAL.Models.Shopping;
 
@@ -10,17 +11,17 @@ public class Listing
 
     public decimal Price { get; set; }
 
-    public int BookId { get; set; }
-
     public int Quantity { get; set; }
 
     public BookFormat Format { get; set; }
 
-    public ListingStatus Status { get; set; }
-
-    public BookCondition Condition { get; set; }
+    public BookCondition? Condition { get; set; }
 
     public decimal DiscountPercentage { get; set; }
+
+    public ListingStatus Status { get; set; }
+
+    public int BookId { get; set; }
 
     public int SellerId { get; set; }
 

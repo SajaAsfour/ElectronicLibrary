@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ElectronicLibrary.DAL.Models.Catalog;
 
-namespace ElectronicLibrary.DAL.Models.Catalog
+public class Publisher
 {
-    public class Publisher
-    {
-    }
+    public int PublisherId { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string? Website { get; set; }
+
+    public ICollection<Book> Books { get; set; } = [];
 }

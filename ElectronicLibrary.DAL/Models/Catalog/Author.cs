@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace ElectronicLibrary.DAL.Models.Catalog;
 
-namespace ElectronicLibrary.DAL.Models.Catalog
+public class Author
 {
-    public class Author
-    {
-    }
+    public int AuthorId { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public string? Biography { get; set; }
+
+    public ICollection<BookAuthor> BookAuthors { get; set; } = [];
 }

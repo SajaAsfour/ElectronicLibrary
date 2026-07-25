@@ -1,4 +1,6 @@
-﻿public enum PaymentStatus
+﻿namespace ElectronicLibrary.DAL.Enums;
+
+public enum PaymentStatus
 {
     Pending = 1,
     Paid = 2,

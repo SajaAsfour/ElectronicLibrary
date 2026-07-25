@@ -1,4 +1,6 @@
-﻿public enum BookFormat
+﻿namespace ElectronicLibrary.DAL.Enums;
+
+public enum BookFormat
 {
     Physical = 1,
     Digital = 2,
