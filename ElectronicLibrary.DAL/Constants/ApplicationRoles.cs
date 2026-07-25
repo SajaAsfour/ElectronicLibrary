@@ -1,4 +1,4 @@
-﻿namespace ElectronicLibrary.BLL.Constants;
+﻿namespace ElectronicLibrary.DAL.Constants;
 
 public static class ApplicationRoles
 {

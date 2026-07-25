@@ -1,4 +1,4 @@
-﻿using ElectronicLibrary.BLL.Constants;
+﻿using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.BLL.Interfaces.Authentication;
 using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses;

@@ -1,5 +1,8 @@
-﻿using ElectronicLibrary.DAL.Models.Identity;
+﻿using ElectronicLibrary.DAL.Constants;
+using ElectronicLibrary.DAL.Data;
+using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,89 +10,114 @@ namespace ElectronicLibrary.DAL.Seed;
 
 public static class DatabaseSeeder
 {
-    private static readonly string[] Roles =
-    [
-        "Admin",
-        "Customer",
-        "Seller"
-    ];
-
-    public static async Task SeedAsync(
-        IServiceProvider services,
-        IConfiguration configuration)
+    public static async Task SeedAsync(IServiceProvider services,IConfiguration configuration)
     {
         using var scope = services.CreateScope();
 
-        var roleManager =
-            scope.ServiceProvider
-                .GetRequiredService<
-                    RoleManager<IdentityRole>>();
+        var serviceProvider = scope.ServiceProvider;
 
-        var userManager =
-            scope.ServiceProvider
-                .GetRequiredService<
-                    UserManager<ApplicationUser>>();
+        var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
-        foreach (var roleName in Roles)
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        await context.Database.MigrateAsync();
+
+        await SeedRolesAsync(roleManager);
+
+        await SeedAdminAsync(userManager,configuration);
+
+        await CatalogSeeder.SeedAsync(context);
+    }
+
+    private static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
+    {
+        foreach (var roleName in ApplicationRoles.All)
         {
-            if (!await roleManager.RoleExistsAsync(roleName))
+            if (await roleManager.RoleExistsAsync(roleName))
             {
-                await roleManager.CreateAsync(
-                    new IdentityRole(roleName));
+                continue;
+            }
+
+            var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+
+            if (!result.Succeeded)
+            {
+                var errors =string.Join(Environment.NewLine,
+                    result.Errors.Select(
+                            x =>
+                                $"{x.Code}: {x.Description}"));
+
+                throw new InvalidOperationException(
+                    $"Failed to create role {roleName}:{Environment.NewLine}{errors}");
             }
         }
+    }
 
-        var adminEmail =
-            configuration["SeedAdmin:Email"];
+    private static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager,
+        IConfiguration configuration)
+    {
+        var email = configuration["SeedAdmin:Email"];
 
-        var adminPassword =
-            configuration["SeedAdmin:Password"];
+        var password = configuration["SeedAdmin:Password"];
 
-        if (string.IsNullOrWhiteSpace(adminEmail) ||
-            string.IsNullOrWhiteSpace(adminPassword))
+        var fullName = configuration["SeedAdmin:FullName"] ?? "System Administrator";
+
+        if (string.IsNullOrWhiteSpace(email))
         {
-            return;
+            throw new InvalidOperationException(
+                "SeedAdmin Email is missing.");
         }
 
-        var admin =
-            await userManager.FindByEmailAsync(
-                adminEmail);
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new InvalidOperationException(
+                "SeedAdmin Password is missing.");
+        }
+
+        var admin = await userManager.FindByEmailAsync(email);
 
         if (admin is null)
         {
             admin = new ApplicationUser
             {
-                FullName = "System Administrator",
-                UserName = adminEmail,
-                Email = adminEmail,
+                FullName = fullName,
+                UserName = email,
+                Email = email,
                 EmailConfirmed = true
             };
 
-            var createResult =
-                await userManager.CreateAsync(
-                    admin,
-                    adminPassword);
+            var createResult = await userManager.CreateAsync(admin,password);
 
             if (!createResult.Succeeded)
             {
-                var errors =
-                    string.Join(
-                        ", ",
-                        createResult.Errors.Select(
-                            x => x.Description));
+                var errors = string.Join(Environment.NewLine,
+                       createResult.Errors.Select(
+                            x =>
+                                $"{x.Code}: {x.Description}"));
 
                 throw new InvalidOperationException(
-                    errors);
+                    $"Failed to create admin:{Environment.NewLine}{errors}");
             }
         }
 
-        if (!await userManager.IsInRoleAsync(
-                admin,
-                "Admin"))
+        if (!await userManager.IsInRoleAsync(admin,ApplicationRoles.Admin))
         {
-            await userManager.AddToRoleAsync(
-                admin,
-                "Admin");
+            var roleResult = await userManager.AddToRoleAsync(admin,ApplicationRoles.Admin);
+
+            if (!roleResult.Succeeded)
+            {
+                var errors =
+                    string.Join(
+                        Environment.NewLine,
+                        roleResult.Errors.Select(
+                            x =>
+                                $"{x.Code}: {x.Description}"));
+
+                throw new InvalidOperationException(
+                    $"Failed to assign Admin role:{Environment.NewLine}{errors}");
+            }
         }
     }
 }
