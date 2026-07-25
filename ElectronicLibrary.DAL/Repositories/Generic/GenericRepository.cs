@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Repositories.Generic
 {
-    internal class GenericRepository
+    public class GenericRepository
     {
     }
 }

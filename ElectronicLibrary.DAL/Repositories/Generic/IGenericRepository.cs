@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Repositories.Generic
 {
-    internal interface IGenericRepository
+    public interface IGenericRepository
     {
     }
 }

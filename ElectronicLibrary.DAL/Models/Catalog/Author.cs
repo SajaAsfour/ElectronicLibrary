@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Catalog
 {
-    internal class Author
+    public class Author
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Repositories.UnitOfWork
 {
-    internal interface IUnitOfWork
+    public interface IUnitOfWork
     {
     }
 }

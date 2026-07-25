@@ -1,12 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ElectronicLibrary.DAL.Models.Orders;
 
-namespace ElectronicLibrary.DAL.Models.Payments
+namespace ElectronicLibrary.DAL.Models.Payments;
+
+public class Payment
 {
-    internal class Payment
-    {
-    }
+    public int PaymentId { get; set; }
+
+    public int OrderId { get; set; }
+
+    public string PaymentMethod { get; set; } = null!;
+
+    public PaymentStatus PaymentStatus { get; set; }
+
+    public decimal Amount { get; set; }
+
+    public DateTime? PaidAt { get; set; }
+
+    public Order Order { get; set; } = null!;
 }

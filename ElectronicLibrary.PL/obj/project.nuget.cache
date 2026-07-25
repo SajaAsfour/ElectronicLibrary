@@ -1,14 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "uUwejh2wMJo=",
+  "dgSpecHash": "t6uYRM1hj1E=",
   "success": true,
   "projectFilePath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\DELL\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
-    "C:\\Users\\DELL\\.nuget\\packages\\entityframework\\6.1.0\\entityframework.6.1.0.nupkg.sha512",
-    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnet.identity.core\\2.2.4\\microsoft.aspnet.identity.core.2.2.4.nupkg.sha512",
-    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnet.identity.entityframework\\2.2.4\\microsoft.aspnet.identity.entityframework.2.2.4.nupkg.sha512",
+    "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\10.0.10\\microsoft.aspnetcore.identity.entityframeworkcore.10.0.10.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.2\\microsoft.aspnetcore.openapi.10.0.2.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\8.0.0\\microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\microsoft.bcl.cryptography\\9.0.4\\microsoft.bcl.cryptography.9.0.4.nupkg.sha512",
@@ -36,42 +34,5 @@
     "C:\\Users\\DELL\\.nuget\\packages\\system.security.cryptography.pkcs\\9.0.4\\system.security.cryptography.pkcs.9.0.4.nupkg.sha512",
     "C:\\Users\\DELL\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.4\\system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'EntityFramework 6.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "libraryId": "EntityFramework",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'Microsoft.AspNet.Identity.Core 2.2.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "libraryId": "Microsoft.AspNet.Identity.Core",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'Microsoft.AspNet.Identity.EntityFramework 2.2.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0'. This package may not be fully compatible with your project.",
-      "projectPath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\DELL\\Desktop\\API\\ElectronicLibrary\\ElectronicLibrary.PL\\ElectronicLibrary.PL.csproj",
-      "libraryId": "Microsoft.AspNet.Identity.EntityFramework",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

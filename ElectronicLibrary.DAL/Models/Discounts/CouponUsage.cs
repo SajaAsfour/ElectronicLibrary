@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElectronicLibrary.DAL.Models.Discounts
 {
-    internal class CouponUsage
+    public class CouponUsage
     {
     }
 }

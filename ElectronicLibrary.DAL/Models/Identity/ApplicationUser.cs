@@ -2,8 +2,7 @@
 using ElectronicLibrary.DAL.Models.Orders;
 using ElectronicLibrary.DAL.Models.Shopping;
 using ElectronicLibrary.DAL.Models.Reviews;
-using Microsoft.AspNet.Identity.EntityFramework;
-
+using Microsoft.AspNetCore.Identity;
 namespace ElectronicLibrary.DAL.Models.Identity;
 
 public class ApplicationUser : IdentityUser
