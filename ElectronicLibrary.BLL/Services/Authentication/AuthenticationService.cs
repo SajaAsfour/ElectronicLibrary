@@ -372,6 +372,39 @@ public class AuthenticationService : IAuthenticationService
         };
     }
 
+    public async Task UpdateProfileAsync(
+        string userId,
+        UpdateProfileRequest request)
+    {
+        var user = await GetActiveUserAsync(userId);
+
+        user.FullName = request.FullName.Trim();
+
+        await UpdateUserAsync(user);
+    }
+
+    public async Task UpdateAddressAsync(
+        string userId,
+        UpdateAddressRequest request)
+    {
+        var user = await GetActiveUserAsync(userId);
+
+        user.Address = NormalizeOptionalValue(request.Address);
+
+        await UpdateUserAsync(user);
+    }
+
+    public async Task UpdateCityAsync(
+        string userId,
+        UpdateCityRequest request)
+    {
+        var user = await GetActiveUserAsync(userId);
+
+        user.City = NormalizeOptionalValue(request.City);
+
+        await UpdateUserAsync(user);
+    }
+
     public async Task LogoutAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -392,6 +425,38 @@ public class AuthenticationService : IAuthenticationService
             throw new InvalidOperationException(
                 FormatIdentityErrors(result.Errors));
         }
+    }
+
+    private async Task<ApplicationUser> GetActiveUserAsync(
+        string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new KeyNotFoundException(
+                "UserNotFound");
+        }
+
+        return user;
+    }
+
+    private async Task UpdateUserAsync(ApplicationUser user)
+    {
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(updateResult.Errors));
+        }
+    }
+
+    private static string? NormalizeOptionalValue(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? null
+            : value.Trim();
     }
 
     private async Task<ApplicationUser>

@@ -136,4 +136,13 @@
 	<data name="RefreshTokenRevokedSuccessfully" xml:space="preserve">
     <value>تم إلغاء رمز التحديث بنجاح.</value>
   </data>
+	<data name="ProfileUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث الملف الشخصي بنجاح.</value>
+  </data>
+	<data name="AddressUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث العنوان بنجاح.</value>
+  </data>
+	<data name="CityUpdatedSuccessfully" xml:space="preserve">
+    <value>تم تحديث المدينة بنجاح.</value>
+  </data>
 </root>

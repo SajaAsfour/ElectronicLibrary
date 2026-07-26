@@ -228,6 +228,78 @@ public class AccountController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPut("profile")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> UpdateProfile(
+        UpdateProfileRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.UpdateProfileAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "ProfileUpdatedSuccessfully"].Value
+        });
+    }
+
+    [HttpPut("address")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> UpdateAddress(
+        UpdateAddressRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.UpdateAddressAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "AddressUpdatedSuccessfully"].Value
+        });
+    }
+
+    [HttpPut("city")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> UpdateCity(
+        UpdateCityRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.UpdateCityAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "CityUpdatedSuccessfully"].Value
+        });
+    }
+
     [HttpPost("logout")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
