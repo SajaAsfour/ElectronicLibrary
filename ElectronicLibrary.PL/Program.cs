@@ -13,6 +13,8 @@ builder.Services.AddIdentityServices();
 
 builder.Services.AddJwtAuthenticationServices(builder.Configuration);
 
+builder.Services.AddAuthorizationPolicies();
+
 builder.Services.AddApplicationServices();
 
 builder.Services.AddEmailServices(builder.Configuration);
