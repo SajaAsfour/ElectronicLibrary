@@ -15,6 +15,8 @@ builder.Services.AddJwtAuthenticationServices(builder.Configuration);
 
 builder.Services.AddApplicationServices();
 
+builder.Services.AddEmailServices(builder.Configuration);
+
 builder.Services.AddLocalizationServices();
 
 var app = builder.Build();

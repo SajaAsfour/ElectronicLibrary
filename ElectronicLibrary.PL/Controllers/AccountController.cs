@@ -1,8 +1,11 @@
 ﻿using ElectronicLibrary.BLL.Interfaces.Authentication;
 using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
+using ElectronicLibrary.DAL.DTOs.Responses.Common;
+using ElectronicLibrary.PL.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Security.Claims;
 
 namespace ElectronicLibrary.PL.Controllers;
@@ -12,44 +15,116 @@ namespace ElectronicLibrary.PL.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly IStringLocalizer<SharedResources> _localizer;
 
     public AccountController(
-        IAuthenticationService authenticationService)
+        IAuthenticationService authenticationService,
+        IStringLocalizer<SharedResources> localizer)
     {
         _authenticationService = authenticationService;
+        _localizer = localizer;
     }
 
     [HttpPost("register")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticationResponse),StatusCodes.Status200OK)]
-    [ProducesResponseType( StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<AuthenticationResponse>> Register(RegisterRequest request)
+    [ProducesResponseType(typeof(RegisterResponse),StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<RegisterResponse>> Register(RegisterRequest request)
     {
-        var response = await _authenticationService.RegisterAsync(request);
+        var response = await _authenticationService.RegisterAsync(
+            request);
 
-        return Ok(response);
+        response.Message =
+            _localizer["RegistrationPendingEmailConfirmation"].Value;
+
+        return StatusCode(
+            StatusCodes.Status201Created,
+            response);
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticationResponse),StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(AuthenticationResponse),
+        StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AuthenticationResponse>> Login(LoginRequest request)
+    public async Task<ActionResult<AuthenticationResponse>> Login(
+        LoginRequest request)
     {
-        var response =await _authenticationService.LoginAsync(request);
+        var response = await _authenticationService.LoginAsync(
+            request);
 
         return Ok(response);
     }
 
     [HttpPost("refresh-token")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(AuthenticationResponse),StatusCodes.Status200OK)]
+    [ProducesResponseType(
+        typeof(AuthenticationResponse),
+        StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<AuthenticationResponse>>RefreshToken(RefreshTokenRequest request)
+    public async Task<ActionResult<AuthenticationResponse>> RefreshToken(
+        RefreshTokenRequest request)
     {
-        var response = await _authenticationService.RefreshTokenAsync(request);
+        var response =
+            await _authenticationService.RefreshTokenAsync(request);
 
         return Ok(response);
+    }
+
+    [HttpPost("confirm-email")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MessageResponse>> ConfirmEmail(
+        ConfirmEmailRequest request)
+    {
+        await _authenticationService.ConfirmEmailAsync(request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer["EmailConfirmedSuccessfully"].Value
+        });
+    }
+
+    [HttpGet("confirm-email")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MessageResponse>> ConfirmEmailFromLink(
+        [FromQuery] ConfirmEmailRequest request)
+    {
+        await _authenticationService.ConfirmEmailAsync(request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer["EmailConfirmedSuccessfully"].Value
+        });
+    }
+
+    [HttpPost("resend-confirmation-email")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<MessageResponse>>
+        ResendConfirmationEmail(
+            ResendConfirmationEmailRequest request)
+    {
+        await _authenticationService.ResendConfirmationEmailAsync(
+            request);
+
+        return Accepted(new MessageResponse
+        {
+            Message = _localizer[
+                "ConfirmationEmailRequestAccepted"].Value
+        });
     }
 
     [HttpPost("logout")]
@@ -58,7 +133,8 @@ public class AccountController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Logout()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(userId))
         {

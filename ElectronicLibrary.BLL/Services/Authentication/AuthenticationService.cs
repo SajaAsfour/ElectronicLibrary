@@ -1,4 +1,5 @@
 ﻿using ElectronicLibrary.BLL.Interfaces.Authentication;
+using ElectronicLibrary.BLL.Interfaces.Email;
 using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
@@ -13,90 +14,145 @@ namespace ElectronicLibrary.BLL.Services.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly ITokenService _tokenService;
+    private readonly IEmailService _emailService;
 
     public AuthenticationService(
         UserManager<ApplicationUser> userManager,
-        ITokenService tokenService)
+        SignInManager<ApplicationUser> signInManager,
+        ITokenService tokenService,
+        IEmailService emailService)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _tokenService = tokenService;
+        _emailService = emailService;
     }
 
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest request)
+    public async Task<RegisterResponse> RegisterAsync(
+        RegisterRequest request)
     {
-        var existingUser = await _userManager.FindByEmailAsync(request.Email);
+        var email = request.Email.Trim();
+
+        var existingUser = await _userManager.FindByEmailAsync(email);
 
         if (existingUser is not null)
         {
-            throw new InvalidOperationException("UserAlreadyExists");
+            throw new InvalidOperationException(
+                "UserAlreadyExists");
         }
 
         var user = new ApplicationUser
         {
             FullName = request.FullName.Trim(),
-            Email = request.Email.Trim(),
-            UserName = request.Email.Trim(),
+            Email = email,
+            UserName = email,
             City = request.City?.Trim(),
             Address = request.Address?.Trim(),
-            EmailConfirmed = true
+            EmailConfirmed = false,
+            LockoutEnabled = true
         };
 
-        var createResult =await _userManager.CreateAsync(user,request.Password);
+        var createResult = await _userManager.CreateAsync(
+            user,
+            request.Password);
 
         if (!createResult.Succeeded)
         {
             throw new InvalidOperationException(
-                FormatIdentityErrors(
-                    createResult.Errors));
+                FormatIdentityErrors(createResult.Errors));
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(user,ApplicationRoles.Customer);
+        var roleResult = await _userManager.AddToRoleAsync(
+            user,
+            ApplicationRoles.Customer);
 
         if (!roleResult.Succeeded)
         {
-            await _userManager.DeleteAsync(user);
+            var deleteResult = await _userManager.DeleteAsync(user);
+
+            var errors = roleResult.Errors.ToList();
+
+            if (!deleteResult.Succeeded)
+            {
+                errors.AddRange(deleteResult.Errors);
+            }
 
             throw new InvalidOperationException(
-                FormatIdentityErrors(
-                    roleResult.Errors));
+                FormatIdentityErrors(errors));
         }
 
-        return await CreateAuthenticationResponseAsync(
-            user);
+        await SendConfirmationEmailAsync(user);
+
+        return new RegisterResponse
+        {
+            UserId = user.Id,
+            Email = user.Email ?? email,
+            EmailConfirmationRequired = true
+        };
     }
 
-    public async Task<AuthenticationResponse> LoginAsync(LoginRequest request)
+    public async Task<AuthenticationResponse> LoginAsync(
+        LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByEmailAsync(
+            request.Email.Trim());
 
-        if (user is null)
-        {
-            throw new UnauthorizedAccessException("InvalidCredentials");
-        }
-
-        var isPasswordValid =
-            await _userManager.CheckPasswordAsync(
-                user,
-                request.Password);
-
-        if (!isPasswordValid)
+        if (user is null || user.IsDeleted)
         {
             throw new UnauthorizedAccessException(
                 "InvalidCredentials");
         }
 
-        return await CreateAuthenticationResponseAsync(
-            user);
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "EmailNotConfirmed");
+        }
+
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "AccountLocked");
+        }
+
+        var signInResult =
+            await _signInManager.CheckPasswordSignInAsync(
+                user,
+                request.Password,
+                lockoutOnFailure: true);
+
+        if (signInResult.IsLockedOut)
+        {
+            throw new UnauthorizedAccessException(
+                "AccountLocked");
+        }
+
+        if (signInResult.IsNotAllowed)
+        {
+            throw new UnauthorizedAccessException(
+                "EmailNotConfirmed");
+        }
+
+        if (!signInResult.Succeeded)
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidCredentials");
+        }
+
+        return await CreateAuthenticationResponseAsync(user);
     }
 
-    public async Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest request)
+    public async Task<AuthenticationResponse> RefreshTokenAsync(
+        RefreshTokenRequest request)
     {
         ClaimsPrincipal principal;
 
         try
         {
-            principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken);
+            principal = _tokenService.GetPrincipalFromExpiredToken(
+                request.AccessToken);
         }
         catch
         {
@@ -104,7 +160,8 @@ public class AuthenticationService : IAuthenticationService
                 "InvalidAccessToken");
         }
 
-        var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = principal.FindFirstValue(
+            ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -114,39 +171,50 @@ public class AuthenticationService : IAuthenticationService
 
         var user = await _userManager.FindByIdAsync(userId);
 
-        if (user is null)
+        if (user is null || user.IsDeleted)
         {
             throw new UnauthorizedAccessException(
-                "UserNotFound");
+                "InvalidRefreshToken");
+        }
+
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "EmailNotConfirmed");
+        }
+
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "AccountLocked");
         }
 
         if (string.IsNullOrWhiteSpace(user.RefreshTokenHash))
         {
-            throw new UnauthorizedAccessException("RefreshTokenNotAvailable");
+            throw new UnauthorizedAccessException(
+                "RefreshTokenNotAvailable");
         }
 
-        if (user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (user.RefreshTokenExpiryTime is null ||
+            user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new UnauthorizedAccessException(
                 "RefreshTokenExpired");
         }
 
-        var receivedRefreshTokenHash =
-            HashRefreshToken(
-                request.RefreshToken);
+        var receivedRefreshTokenHash = HashRefreshToken(
+            request.RefreshToken);
 
         byte[] storedHash;
         byte[] receivedHash;
 
         try
         {
-            storedHash =
-                Convert.FromBase64String(
-                    user.RefreshTokenHash);
+            storedHash = Convert.FromBase64String(
+                user.RefreshTokenHash);
 
-            receivedHash =
-                Convert.FromBase64String(
-                    receivedRefreshTokenHash);
+            receivedHash = Convert.FromBase64String(
+                receivedRefreshTokenHash);
         }
         catch (FormatException)
         {
@@ -162,8 +230,51 @@ public class AuthenticationService : IAuthenticationService
                 "InvalidRefreshToken");
         }
 
-        return await CreateAuthenticationResponseAsync(
-            user);
+        return await CreateAuthenticationResponseAsync(user);
+    }
+
+    public async Task ConfirmEmailAsync(
+        ConfirmEmailRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(
+            request.UserId.Trim());
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new InvalidOperationException(
+                "InvalidEmailConfirmationToken");
+        }
+
+        if (await _userManager.IsEmailConfirmedAsync(user))
+        {
+            return;
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(
+            user,
+            request.Token);
+
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(
+                "InvalidEmailConfirmationToken");
+        }
+    }
+
+    public async Task ResendConfirmationEmailAsync(
+        ResendConfirmationEmailRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(
+            request.Email.Trim());
+
+        if (user is null ||
+            user.IsDeleted ||
+            await _userManager.IsEmailConfirmedAsync(user))
+        {
+            return;
+        }
+
+        await SendConfirmationEmailAsync(user);
     }
 
     public async Task LogoutAsync(string userId)
@@ -184,23 +295,37 @@ public class AuthenticationService : IAuthenticationService
         if (!result.Succeeded)
         {
             throw new InvalidOperationException(
-                FormatIdentityErrors(
-                    result.Errors));
+                FormatIdentityErrors(result.Errors));
         }
     }
 
-    private async Task<AuthenticationResponse>CreateAuthenticationResponseAsync(ApplicationUser user)
+    private async Task SendConfirmationEmailAsync(
+        ApplicationUser user)
     {
-        var accessTokenExpiration = _tokenService.GetAccessTokenExpirationTime();
+        var confirmationToken =
+            await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        var refreshTokenExpiration = _tokenService.GetRefreshTokenExpirationTime();
+        await _emailService.SendEmailConfirmationAsync(
+            user.Email ?? string.Empty,
+            user.FullName,
+            user.Id,
+            confirmationToken);
+    }
+
+    private async Task<AuthenticationResponse>
+        CreateAuthenticationResponseAsync(ApplicationUser user)
+    {
+        var accessTokenExpiration =
+            _tokenService.GetAccessTokenExpirationTime();
+
+        var refreshTokenExpiration =
+            _tokenService.GetRefreshTokenExpirationTime();
 
         var accessToken = await _tokenService.CreateAccessTokenAsync(user);
 
         var refreshToken = _tokenService.CreateRefreshToken();
 
         user.RefreshTokenHash = HashRefreshToken(refreshToken);
-
         user.RefreshTokenExpiryTime = refreshTokenExpiration;
 
         var updateResult = await _userManager.UpdateAsync(user);
@@ -208,8 +333,7 @@ public class AuthenticationService : IAuthenticationService
         if (!updateResult.Succeeded)
         {
             throw new InvalidOperationException(
-                FormatIdentityErrors(
-                    updateResult.Errors));
+                FormatIdentityErrors(updateResult.Errors));
         }
 
         var roles = await _userManager.GetRolesAsync(user);
@@ -230,7 +354,6 @@ public class AuthenticationService : IAuthenticationService
     private static string HashRefreshToken(string refreshToken)
     {
         var tokenBytes = Encoding.UTF8.GetBytes(refreshToken);
-
         var hashBytes = SHA256.HashData(tokenBytes);
 
         return Convert.ToBase64String(hashBytes);

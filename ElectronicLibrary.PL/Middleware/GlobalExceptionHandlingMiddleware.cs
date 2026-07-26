@@ -1,4 +1,5 @@
-﻿using ElectronicLibrary.PL.Resources;
+﻿using ElectronicLibrary.BLL.Exceptions;
+using ElectronicLibrary.PL.Resources;
 using Microsoft.Extensions.Localization;
 using System.Net;
 using System.Text.Json;
@@ -36,6 +37,17 @@ public class GlobalExceptionHandlingMiddleware
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.Unauthorized,
+                GetLocalizedMessage(exception.Message));
+        }
+        catch (EmailDeliveryException exception)
+        {
+            _logger.LogError(
+                exception,
+                "Email delivery failed.");
+
+            await WriteErrorResponseAsync(
+                context,
+                HttpStatusCode.ServiceUnavailable,
                 GetLocalizedMessage(exception.Message));
         }
         catch (InvalidOperationException exception)

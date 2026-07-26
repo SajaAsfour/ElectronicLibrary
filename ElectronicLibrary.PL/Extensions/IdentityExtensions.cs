@@ -21,13 +21,21 @@ public static class IdentityExtensions
                     options.Password.RequireNonAlphanumeric = true;
                     options.Password.RequiredLength = 8;
 
-                    options.Lockout.MaxFailedAccessAttempts = 5;
+                    options.SignIn.RequireConfirmedEmail = true;
 
+                    options.Lockout.AllowedForNewUsers = true;
+                    options.Lockout.MaxFailedAccessAttempts = 5;
                     options.Lockout.DefaultLockoutTimeSpan =
                         TimeSpan.FromMinutes(15);
                 })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
+        services.Configure<DataProtectionTokenProviderOptions>(
+            options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(24);
+            });
 
         return services;
     }
