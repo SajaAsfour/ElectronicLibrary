@@ -99,4 +99,13 @@
 	<data name="EmailDeliveryFailed" xml:space="preserve">
     <value>The email could not be sent at this time. Please try again later.</value>
   </data>
+	<data name="PasswordResetRequestAccepted" xml:space="preserve">
+    <value>If an eligible account exists, password reset instructions have been sent.</value>
+  </data>
+	<data name="InvalidPasswordResetToken" xml:space="preserve">
+    <value>The password reset token is invalid or has expired.</value>
+  </data>
+	<data name="PasswordResetSuccessful" xml:space="preserve">
+    <value>Your password has been reset successfully. You can now sign in with the new password.</value>
+  </data>
 </root>

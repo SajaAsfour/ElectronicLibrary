@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace ElectronicLibrary.BLL.Services.Authentication;
 
@@ -250,9 +251,17 @@ public class AuthenticationService : IAuthenticationService
             return;
         }
 
+        if (!TryDecodeIdentityToken(
+        request.Token,
+        out var decodedToken))
+        {
+            throw new InvalidOperationException(
+                "InvalidEmailConfirmationToken");
+        }
+
         var result = await _userManager.ConfirmEmailAsync(
             user,
-            request.Token);
+            decodedToken);
 
         if (!result.Succeeded)
         {
@@ -275,6 +284,84 @@ public class AuthenticationService : IAuthenticationService
         }
 
         await SendConfirmationEmailAsync(user);
+    }
+
+    public async Task ForgotPasswordAsync(
+        ForgotPasswordRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(
+            request.Email.Trim());
+
+        if (user is null ||
+            user.IsDeleted ||
+            !await _userManager.IsEmailConfirmedAsync(user))
+        {
+            return;
+        }
+
+        var resetToken =
+            await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        await _emailService.SendPasswordResetAsync(
+            user.Email ?? string.Empty,
+            user.FullName,
+            user.Id,
+            resetToken);
+    }
+
+    public async Task ResetPasswordAsync(
+        ResetPasswordRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(
+            request.UserId.Trim());
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new InvalidOperationException(
+                "InvalidPasswordResetToken");
+        }
+
+        if (!TryDecodeIdentityToken(
+                request.Token,
+                out var decodedToken))
+        {
+            throw new InvalidOperationException(
+                "InvalidPasswordResetToken");
+        }
+
+        var resetResult = await _userManager.ResetPasswordAsync(
+            user,
+            decodedToken,
+            request.NewPassword);
+
+        if (!resetResult.Succeeded)
+        {
+            if (resetResult.Errors.Any(error =>
+                    string.Equals(
+                        error.Code,
+                        "InvalidToken",
+                        StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(
+                    "InvalidPasswordResetToken");
+            }
+
+            throw new InvalidOperationException(
+                FormatIdentityErrors(resetResult.Errors));
+        }
+
+        user.RefreshTokenHash = null;
+        user.RefreshTokenExpiryTime = null;
+        user.AccessFailedCount = 0;
+        user.LockoutEnd = null;
+
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(updateResult.Errors));
+        }
     }
 
     public async Task LogoutAsync(string userId)
@@ -321,7 +408,8 @@ public class AuthenticationService : IAuthenticationService
         var refreshTokenExpiration =
             _tokenService.GetRefreshTokenExpirationTime();
 
-        var accessToken = await _tokenService.CreateAccessTokenAsync(user);
+        var accessToken =
+            await _tokenService.CreateAccessTokenAsync(user);
 
         var refreshToken = _tokenService.CreateRefreshToken();
 
@@ -350,8 +438,29 @@ public class AuthenticationService : IAuthenticationService
             Roles = roles.ToList()
         };
     }
+    private static bool TryDecodeIdentityToken(
+    string encodedToken,
+    out string decodedToken)
+    {
+        decodedToken = string.Empty;
 
-    private static string HashRefreshToken(string refreshToken)
+        try
+        {
+            var tokenBytes = WebEncoders.Base64UrlDecode(
+                encodedToken.Trim());
+
+            decodedToken = Encoding.UTF8.GetString(tokenBytes);
+
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+    private static string HashRefreshToken(
+        string refreshToken)
     {
         var tokenBytes = Encoding.UTF8.GetBytes(refreshToken);
         var hashBytes = SHA256.HashData(tokenBytes);
@@ -359,7 +468,8 @@ public class AuthenticationService : IAuthenticationService
         return Convert.ToBase64String(hashBytes);
     }
 
-    private static string FormatIdentityErrors(IEnumerable<IdentityError> errors)
+    private static string FormatIdentityErrors(
+        IEnumerable<IdentityError> errors)
     {
         return string.Join(
             Environment.NewLine,

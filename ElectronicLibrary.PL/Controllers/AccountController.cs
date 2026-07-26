@@ -27,10 +27,13 @@ public class AccountController : ControllerBase
 
     [HttpPost("register")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(RegisterResponse),StatusCodes.Status201Created)]
+    [ProducesResponseType(
+        typeof(RegisterResponse),
+        StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
-    public async Task<ActionResult<RegisterResponse>> Register(RegisterRequest request)
+    public async Task<ActionResult<RegisterResponse>> Register(
+        RegisterRequest request)
     {
         var response = await _authenticationService.RegisterAsync(
             request);
@@ -124,6 +127,42 @@ public class AccountController : ControllerBase
         {
             Message = _localizer[
                 "ConfirmationEmailRequestAccepted"].Value
+        });
+    }
+
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<ActionResult<MessageResponse>> ForgotPassword(
+        ForgotPasswordRequest request)
+    {
+        await _authenticationService.ForgotPasswordAsync(request);
+
+        return Accepted(new MessageResponse
+        {
+            Message = _localizer[
+                "PasswordResetRequestAccepted"].Value
+        });
+    }
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<MessageResponse>> ResetPassword(
+        ResetPasswordRequest request)
+    {
+        await _authenticationService.ResetPasswordAsync(request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "PasswordResetSuccessful"].Value
         });
     }
 

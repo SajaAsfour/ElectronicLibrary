@@ -19,4 +19,6 @@ public class EmailOptions
     public string FromName { get; set; } = string.Empty;
 
     public string ConfirmationUrl { get; set; } = string.Empty;
+
+    public string PasswordResetUrl { get; set; } = string.Empty;
 }

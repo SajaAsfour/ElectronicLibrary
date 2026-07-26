@@ -40,6 +40,12 @@ public static class EmailExtensions
                     UriKind.Absolute,
                     out _),
                 "Email ConfirmationUrl must be an absolute URL.")
+            .Validate(
+                options => Uri.TryCreate(
+                    options.PasswordResetUrl,
+                    UriKind.Absolute,
+                    out _),
+                "Email PasswordResetUrl must be an absolute URL.")
             .ValidateOnStart();
 
         services.AddScoped<IEmailService, EmailService>();
