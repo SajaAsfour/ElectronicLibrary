@@ -27,6 +27,8 @@ The current phase includes:
 - Dependency Injection
 - Seed Data
 - Entity Framework Core Migrations
+- English and Arabic localization
+- Accept-Language header support
 
 ---
 
@@ -643,7 +645,6 @@ The following features will be implemented in later phases:
 - Searching
 - Filtering
 - Pagination
-- Localization (Multi-language Support)
 - Soft Delete
 - Audit Fields
 - Image Upload
