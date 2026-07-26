@@ -1,7 +1,10 @@
 ﻿using System.Text;
 using ElectronicLibrary.BLL.Options;
+using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace ElectronicLibrary.PL.Extensions;
 
@@ -72,6 +75,33 @@ public static class AuthenticationExtensions
 
                         ClockSkew = TimeSpan.Zero
                     };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var userId = context.Principal?.FindFirstValue(
+                            ClaimTypes.NameIdentifier);
+
+                        if (string.IsNullOrWhiteSpace(userId))
+                        {
+                            context.Fail("Invalid user token.");
+                            return;
+                        }
+
+                        var userManager = context.HttpContext
+                            .RequestServices
+                            .GetRequiredService<
+                                UserManager<ApplicationUser>>();
+
+                        var user = await userManager.FindByIdAsync(userId);
+
+                        if (user is null || user.IsDeleted)
+                        {
+                            context.Fail("The user account is not active.");
+                        }
+                    }
+                };
             });
 
         services.AddAuthorization();

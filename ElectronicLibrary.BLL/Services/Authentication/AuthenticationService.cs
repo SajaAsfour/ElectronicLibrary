@@ -405,6 +405,47 @@ public class AuthenticationService : IAuthenticationService
         await UpdateUserAsync(user);
     }
 
+    public async Task DeleteAccountAsync(
+        string userId,
+        DeleteAccountRequest request)
+    {
+        var user = await GetActiveUserAsync(userId);
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        if (roles.Contains(
+                ApplicationRoles.Admin,
+                StringComparer.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "AdminAccountCannotBeDeleted");
+        }
+
+        var passwordIsValid = await _userManager.CheckPasswordAsync(
+            user,
+            request.CurrentPassword);
+
+        if (!passwordIsValid)
+        {
+            throw new InvalidOperationException(
+                "CurrentPasswordIncorrect");
+        }
+
+        user.IsDeleted = true;
+        user.DeletedAt = DateTime.UtcNow;
+        user.RefreshTokenHash = null;
+        user.RefreshTokenExpiryTime = null;
+
+        var updateResult =
+            await _userManager.UpdateSecurityStampAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(updateResult.Errors));
+        }
+    }
+
     public async Task LogoutAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);

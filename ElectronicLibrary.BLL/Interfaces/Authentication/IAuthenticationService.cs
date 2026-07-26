@@ -28,13 +28,21 @@ public interface IAuthenticationService
 
     Task<CurrentUserResponse> GetCurrentUserAsync(string userId);
 
-    Task UpdateProfileAsync(string userId,UpdateProfileRequest request);
+    Task UpdateProfileAsync(
+        string userId,
+        UpdateProfileRequest request);
 
-    Task UpdateAddressAsync(string userId,UpdateAddressRequest request);
+    Task UpdateAddressAsync(
+        string userId,
+        UpdateAddressRequest request);
 
     Task UpdateCityAsync(
         string userId,
         UpdateCityRequest request);
+
+    Task DeleteAccountAsync(
+        string userId,
+        DeleteAccountRequest request);
 
     Task LogoutAsync(string userId);
 }

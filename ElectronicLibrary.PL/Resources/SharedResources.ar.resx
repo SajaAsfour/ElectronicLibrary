@@ -145,4 +145,10 @@
 	<data name="CityUpdatedSuccessfully" xml:space="preserve">
     <value>تم تحديث المدينة بنجاح.</value>
   </data>
+	<data name="AccountDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف حسابك بنجاح.</value>
+  </data>
+	<data name="AdminAccountCannotBeDeleted" xml:space="preserve">
+    <value>لا يمكن حذف حساب مسؤول النظام من واجهة الحساب.</value>
+  </data>
 </root>

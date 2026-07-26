@@ -300,6 +300,30 @@ public class AccountController : ControllerBase
         });
     }
 
+    [HttpDelete]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> DeleteAccount(
+        [FromBody] DeleteAccountRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.DeleteAccountAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "AccountDeletedSuccessfully"].Value
+        });
+    }
+
     [HttpPost("logout")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
