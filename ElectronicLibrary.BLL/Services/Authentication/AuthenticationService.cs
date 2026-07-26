@@ -534,6 +534,19 @@ public class AuthenticationService : IAuthenticationService
                 "InvalidRefreshToken");
         }
 
+        var tokenSecurityStamp = principal.FindFirstValue(
+            CustomClaimTypes.SecurityStamp);
+
+        if (string.IsNullOrWhiteSpace(tokenSecurityStamp) ||
+            !string.Equals(
+                tokenSecurityStamp,
+                user.SecurityStamp,
+                StringComparison.Ordinal))
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidAccessToken");
+        }
+
         if (!await _userManager.IsEmailConfirmedAsync(user))
         {
             throw new UnauthorizedAccessException(

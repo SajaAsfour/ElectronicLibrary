@@ -151,4 +151,31 @@
 	<data name="AdminAccountCannotBeDeleted" xml:space="preserve">
     <value>لا يمكن حذف حساب مسؤول النظام من واجهة الحساب.</value>
   </data>
+	<data name="RoleAssignedSuccessfully" xml:space="preserve">
+    <value>تم إسناد الدور بنجاح.</value>
+  </data>
+	<data name="RoleRemovedSuccessfully" xml:space="preserve">
+    <value>تمت إزالة الدور بنجاح.</value>
+  </data>
+	<data name="InvalidRole" xml:space="preserve">
+    <value>الدور المحدد غير صالح.</value>
+  </data>
+	<data name="RoleAlreadyAssigned" xml:space="preserve">
+    <value>هذا الدور مسند للمستخدم مسبقًا.</value>
+  </data>
+	<data name="RoleNotAssigned" xml:space="preserve">
+    <value>هذا الدور غير مسند للمستخدم.</value>
+  </data>
+	<data name="CannotModifyDeletedUser" xml:space="preserve">
+    <value>لا يمكن تعديل أدوار مستخدم محذوف.</value>
+  </data>
+	<data name="CannotRemoveOwnAdminRole" xml:space="preserve">
+    <value>لا يمكنك إزالة دور مسؤول النظام من حسابك.</value>
+  </data>
+	<data name="CannotRemoveLastAdmin" xml:space="preserve">
+    <value>لا يمكن إزالة الدور من آخر مسؤول نظام فعال.</value>
+  </data>
+	<data name="CannotRemoveOnlyRole" xml:space="preserve">
+    <value>يجب أن يمتلك المستخدم دورًا واحدًا على الأقل.</value>
+  </data>
 </root>

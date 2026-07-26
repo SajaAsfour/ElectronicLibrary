@@ -1,5 +1,6 @@
 ﻿using ElectronicLibrary.BLL.Interfaces.Authentication;
 using ElectronicLibrary.BLL.Options;
+using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -16,7 +17,7 @@ public class TokenService : ITokenService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly JwtOptions _jwtOptions;
 
-    public TokenService(UserManager<ApplicationUser> userManager,IOptions<JwtOptions> jwtOptions)
+    public TokenService(UserManager<ApplicationUser> userManager, IOptions<JwtOptions> jwtOptions)
     {
         _userManager = userManager;
         _jwtOptions = jwtOptions.Value;
@@ -46,7 +47,11 @@ public class TokenService : ITokenService
 
             new(
                 JwtRegisteredClaimNames.Jti,
-                Guid.NewGuid().ToString())
+                Guid.NewGuid().ToString()),
+
+            new(
+                CustomClaimTypes.SecurityStamp,
+                user.SecurityStamp ?? string.Empty)
         };
 
         claims.AddRange(

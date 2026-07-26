@@ -1,10 +1,11 @@
-﻿using System.Text;
-using ElectronicLibrary.BLL.Options;
+﻿using ElectronicLibrary.BLL.Options;
+using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Text;
 
 namespace ElectronicLibrary.PL.Extensions;
 
@@ -98,7 +99,24 @@ public static class AuthenticationExtensions
 
                         if (user is null || user.IsDeleted)
                         {
-                            context.Fail("The user account is not active.");
+                            context.Fail(
+                                "The user account is not active.");
+                            return;
+                        }
+
+                        var tokenSecurityStamp = context.Principal
+                            ?.FindFirstValue(
+                                CustomClaimTypes.SecurityStamp);
+
+                        if (string.IsNullOrWhiteSpace(
+                                tokenSecurityStamp) ||
+                            !string.Equals(
+                                tokenSecurityStamp,
+                                user.SecurityStamp,
+                                StringComparison.Ordinal))
+                        {
+                            context.Fail(
+                                "The access token is no longer valid.");
                         }
                     }
                 };

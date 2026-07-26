@@ -132,4 +132,31 @@
   <data name="AdminAccountCannotBeDeleted" xml:space="preserve">
     <value>An administrator account cannot be deleted from the account endpoint.</value>
   </data>
+  <data name="RoleAssignedSuccessfully" xml:space="preserve">
+    <value>The role was assigned successfully.</value>
+  </data>
+  <data name="RoleRemovedSuccessfully" xml:space="preserve">
+    <value>The role was removed successfully.</value>
+  </data>
+  <data name="InvalidRole" xml:space="preserve">
+    <value>The specified role is invalid.</value>
+  </data>
+  <data name="RoleAlreadyAssigned" xml:space="preserve">
+    <value>The user already has this role.</value>
+  </data>
+  <data name="RoleNotAssigned" xml:space="preserve">
+    <value>The user does not have this role.</value>
+  </data>
+  <data name="CannotModifyDeletedUser" xml:space="preserve">
+    <value>Roles cannot be changed for a deleted user.</value>
+  </data>
+  <data name="CannotRemoveOwnAdminRole" xml:space="preserve">
+    <value>You cannot remove your own administrator role.</value>
+  </data>
+  <data name="CannotRemoveLastAdmin" xml:space="preserve">
+    <value>The role cannot be removed from the last active administrator.</value>
+  </data>
+  <data name="CannotRemoveOnlyRole" xml:space="preserve">
+    <value>A user must have at least one role.</value>
+  </data>
 </root>

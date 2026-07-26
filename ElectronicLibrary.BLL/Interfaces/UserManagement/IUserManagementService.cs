@@ -14,4 +14,13 @@ public interface IUserManagementService
 
     Task<UserRolesResponse> GetUserRolesAsync(
         string userId);
+
+    Task<UserRolesResponse> AssignRoleAsync(
+        string userId,
+        AssignRoleRequest request);
+
+    Task<UserRolesResponse> RemoveRoleAsync(
+        string actingAdminId,
+        string userId,
+        string role);
 }
