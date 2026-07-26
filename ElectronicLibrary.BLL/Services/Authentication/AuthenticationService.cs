@@ -148,90 +148,26 @@ public class AuthenticationService : IAuthenticationService
     public async Task<AuthenticationResponse> RefreshTokenAsync(
         RefreshTokenRequest request)
     {
-        ClaimsPrincipal principal;
-
-        try
-        {
-            principal = _tokenService.GetPrincipalFromExpiredToken(
-                request.AccessToken);
-        }
-        catch
-        {
-            throw new UnauthorizedAccessException(
-                "InvalidAccessToken");
-        }
-
-        var userId = principal.FindFirstValue(
-            ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            throw new UnauthorizedAccessException(
-                "InvalidAccessToken");
-        }
-
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user is null || user.IsDeleted)
-        {
-            throw new UnauthorizedAccessException(
-                "InvalidRefreshToken");
-        }
-
-        if (!await _userManager.IsEmailConfirmedAsync(user))
-        {
-            throw new UnauthorizedAccessException(
-                "EmailNotConfirmed");
-        }
-
-        if (await _userManager.IsLockedOutAsync(user))
-        {
-            throw new UnauthorizedAccessException(
-                "AccountLocked");
-        }
-
-        if (string.IsNullOrWhiteSpace(user.RefreshTokenHash))
-        {
-            throw new UnauthorizedAccessException(
-                "RefreshTokenNotAvailable");
-        }
-
-        if (user.RefreshTokenExpiryTime is null ||
-            user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-        {
-            throw new UnauthorizedAccessException(
-                "RefreshTokenExpired");
-        }
-
-        var receivedRefreshTokenHash = HashRefreshToken(
-            request.RefreshToken);
-
-        byte[] storedHash;
-        byte[] receivedHash;
-
-        try
-        {
-            storedHash = Convert.FromBase64String(
-                user.RefreshTokenHash);
-
-            receivedHash = Convert.FromBase64String(
-                receivedRefreshTokenHash);
-        }
-        catch (FormatException)
-        {
-            throw new UnauthorizedAccessException(
-                "InvalidRefreshToken");
-        }
-
-        if (!CryptographicOperations.FixedTimeEquals(
-                storedHash,
-                receivedHash))
-        {
-            throw new UnauthorizedAccessException(
-                "InvalidRefreshToken");
-        }
+        var user = await GetUserByValidRefreshTokenAsync(request);
 
         return await CreateAuthenticationResponseAsync(user);
+    }
+
+    public async Task RevokeRefreshTokenAsync(
+        RefreshTokenRequest request)
+    {
+        var user = await GetUserByValidRefreshTokenAsync(request);
+
+        user.RefreshTokenHash = null;
+        user.RefreshTokenExpiryTime = null;
+
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(updateResult.Errors));
+        }
     }
 
     public async Task ConfirmEmailAsync(
@@ -456,6 +392,96 @@ public class AuthenticationService : IAuthenticationService
             throw new InvalidOperationException(
                 FormatIdentityErrors(result.Errors));
         }
+    }
+
+    private async Task<ApplicationUser>
+        GetUserByValidRefreshTokenAsync(
+            RefreshTokenRequest request)
+    {
+        ClaimsPrincipal principal;
+
+        try
+        {
+            principal = _tokenService.GetPrincipalFromExpiredToken(
+                request.AccessToken);
+        }
+        catch
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidAccessToken");
+        }
+
+        var userId = principal.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidAccessToken");
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidRefreshToken");
+        }
+
+        if (!await _userManager.IsEmailConfirmedAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "EmailNotConfirmed");
+        }
+
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            throw new UnauthorizedAccessException(
+                "AccountLocked");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.RefreshTokenHash))
+        {
+            throw new UnauthorizedAccessException(
+                "RefreshTokenNotAvailable");
+        }
+
+        if (user.RefreshTokenExpiryTime is null ||
+            user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            throw new UnauthorizedAccessException(
+                "RefreshTokenExpired");
+        }
+
+        var receivedRefreshTokenHash = HashRefreshToken(
+            request.RefreshToken);
+
+        byte[] storedHash;
+        byte[] receivedHash;
+
+        try
+        {
+            storedHash = Convert.FromBase64String(
+                user.RefreshTokenHash);
+
+            receivedHash = Convert.FromBase64String(
+                receivedRefreshTokenHash);
+        }
+        catch (FormatException)
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidRefreshToken");
+        }
+
+        if (!CryptographicOperations.FixedTimeEquals(
+                storedHash,
+                receivedHash))
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidRefreshToken");
+        }
+
+        return user;
     }
 
     private async Task SendConfirmationEmailAsync(

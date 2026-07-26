@@ -133,4 +133,7 @@
 	<data name="PasswordChangedSuccessfully" xml:space="preserve">
     <value>تم تغيير كلمة المرور بنجاح.</value>
   </data>
+	<data name="RefreshTokenRevokedSuccessfully" xml:space="preserve">
+    <value>تم إلغاء رمز التحديث بنجاح.</value>
+  </data>
 </root>

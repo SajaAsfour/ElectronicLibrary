@@ -10,11 +10,22 @@ public interface IAuthenticationService
     Task<AuthenticationResponse> LoginAsync(LoginRequest request);
 
     Task<AuthenticationResponse> RefreshTokenAsync(RefreshTokenRequest request);
+
+    Task RevokeRefreshTokenAsync(RefreshTokenRequest request);
+
     Task ConfirmEmailAsync(ConfirmEmailRequest request);
-    Task ResendConfirmationEmailAsync(ResendConfirmationEmailRequest request);
+
+    Task ResendConfirmationEmailAsync(
+        ResendConfirmationEmailRequest request);
+
     Task ForgotPasswordAsync(ForgotPasswordRequest request);
+
     Task ResetPasswordAsync(ResetPasswordRequest request);
-    Task ChangePasswordAsync(string userId,ChangePasswordRequest request);
+
+    Task ChangePasswordAsync(
+        string userId,
+        ChangePasswordRequest request);
+
     Task<CurrentUserResponse> GetCurrentUserAsync(string userId);
 
     Task LogoutAsync(string userId);

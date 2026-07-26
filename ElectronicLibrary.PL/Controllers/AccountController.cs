@@ -76,6 +76,25 @@ public class AccountController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPost("revoke-refresh-token")]
+    [AllowAnonymous]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<MessageResponse>>
+        RevokeRefreshToken(RefreshTokenRequest request)
+    {
+        await _authenticationService.RevokeRefreshTokenAsync(
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "RefreshTokenRevokedSuccessfully"].Value
+        });
+    }
+
     [HttpPost("confirm-email")]
     [AllowAnonymous]
     [ProducesResponseType(
