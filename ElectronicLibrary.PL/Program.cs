@@ -1,5 +1,6 @@
 using ElectronicLibrary.DAL.Seed;
 using ElectronicLibrary.PL.Extensions;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +15,17 @@ builder.Services.AddJwtAuthenticationServices(builder.Configuration);
 
 builder.Services.AddApplicationServices();
 
+builder.Services.AddLocalizationServices();
+
 var app = builder.Build();
 
+var localizationOptions =
+    app.Services
+        .GetRequiredService<
+            IOptions<RequestLocalizationOptions>>()
+        .Value;
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseGlobalExceptionHandling();
 

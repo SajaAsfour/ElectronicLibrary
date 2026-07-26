@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using ElectronicLibrary.PL.Resources;
+using Microsoft.Extensions.Localization;
+using System.Net;
 using System.Text.Json;
 
 namespace ElectronicLibrary.PL.Middleware;
@@ -7,11 +9,16 @@ public class GlobalExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
+    private readonly IStringLocalizer<SharedResources> _localizer;
 
-    public GlobalExceptionHandlingMiddleware(RequestDelegate next,ILogger<GlobalExceptionHandlingMiddleware> logger)
+    public GlobalExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<GlobalExceptionHandlingMiddleware> logger,
+        IStringLocalizer<SharedResources> localizer)
     {
         _next = next;
         _logger = logger;
+        _localizer = localizer;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -29,7 +36,7 @@ public class GlobalExceptionHandlingMiddleware
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.Unauthorized,
-                exception.Message);
+                GetLocalizedMessage(exception.Message));
         }
         catch (InvalidOperationException exception)
         {
@@ -40,7 +47,7 @@ public class GlobalExceptionHandlingMiddleware
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.BadRequest,
-                exception.Message);
+                GetLocalizedMessage(exception.Message));
         }
         catch (KeyNotFoundException exception)
         {
@@ -51,7 +58,7 @@ public class GlobalExceptionHandlingMiddleware
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.NotFound,
-                exception.Message);
+                GetLocalizedMessage(exception.Message));
         }
         catch (Exception exception)
         {
@@ -62,16 +69,25 @@ public class GlobalExceptionHandlingMiddleware
             await WriteErrorResponseAsync(
                 context,
                 HttpStatusCode.InternalServerError,
-                "An unexpected error occurred.");
+                GetLocalizedMessage("UnexpectedError"));
         }
     }
 
-    private static async Task WriteErrorResponseAsync(HttpContext context,
+    private string GetLocalizedMessage(string resourceKey)
+    {
+        var localizedValue = _localizer[resourceKey];
+
+        return localizedValue.ResourceNotFound
+            ? resourceKey
+            : localizedValue.Value;
+    }
+
+    private static async Task WriteErrorResponseAsync(
+        HttpContext context,
         HttpStatusCode statusCode,
         string message)
     {
         context.Response.StatusCode = (int)statusCode;
-
         context.Response.ContentType = "application/json";
 
         var response = new
@@ -80,8 +96,7 @@ public class GlobalExceptionHandlingMiddleware
             message
         };
 
-        var json = JsonSerializer.Serialize(response);
-
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(response));
     }
 }

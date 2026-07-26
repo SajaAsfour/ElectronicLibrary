@@ -1,7 +1,6 @@
-﻿using ElectronicLibrary.DAL.Constants;
-using ElectronicLibrary.BLL.Interfaces.Authentication;
+﻿using ElectronicLibrary.BLL.Interfaces.Authentication;
+using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
-using ElectronicLibrary.DAL.DTOs.Responses;
 using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
 using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -30,8 +29,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (existingUser is not null)
         {
-            throw new InvalidOperationException(
-                "A user with this email already exists.");
+            throw new InvalidOperationException("UserAlreadyExists");
         }
 
         var user = new ApplicationUser
@@ -44,7 +42,7 @@ public class AuthenticationService : IAuthenticationService
             EmailConfirmed = true
         };
 
-        var createResult = await _userManager.CreateAsync(user,request.Password);
+        var createResult =await _userManager.CreateAsync(user,request.Password);
 
         if (!createResult.Succeeded)
         {
@@ -53,9 +51,7 @@ public class AuthenticationService : IAuthenticationService
                     createResult.Errors));
         }
 
-        var roleResult = await _userManager.AddToRoleAsync(
-                user,
-                ApplicationRoles.Customer);
+        var roleResult = await _userManager.AddToRoleAsync(user,ApplicationRoles.Customer);
 
         if (!roleResult.Succeeded)
         {
@@ -76,8 +72,7 @@ public class AuthenticationService : IAuthenticationService
 
         if (user is null)
         {
-            throw new UnauthorizedAccessException(
-                "Invalid email or password.");
+            throw new UnauthorizedAccessException("InvalidCredentials");
         }
 
         var isPasswordValid =
@@ -88,7 +83,7 @@ public class AuthenticationService : IAuthenticationService
         if (!isPasswordValid)
         {
             throw new UnauthorizedAccessException(
-                "Invalid email or password.");
+                "InvalidCredentials");
         }
 
         return await CreateAuthenticationResponseAsync(
@@ -101,15 +96,12 @@ public class AuthenticationService : IAuthenticationService
 
         try
         {
-            principal =
-                _tokenService
-                    .GetPrincipalFromExpiredToken(
-                        request.AccessToken);
+            principal = _tokenService.GetPrincipalFromExpiredToken(request.AccessToken);
         }
         catch
         {
             throw new UnauthorizedAccessException(
-                "Invalid access token.");
+                "InvalidAccessToken");
         }
 
         var userId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -117,7 +109,7 @@ public class AuthenticationService : IAuthenticationService
         if (string.IsNullOrWhiteSpace(userId))
         {
             throw new UnauthorizedAccessException(
-                "Invalid access token.");
+                "InvalidAccessToken");
         }
 
         var user = await _userManager.FindByIdAsync(userId);
@@ -125,36 +117,53 @@ public class AuthenticationService : IAuthenticationService
         if (user is null)
         {
             throw new UnauthorizedAccessException(
-                "User was not found.");
+                "UserNotFound");
         }
 
         if (string.IsNullOrWhiteSpace(user.RefreshTokenHash))
         {
-            throw new UnauthorizedAccessException(
-                "Refresh token is not available.");
+            throw new UnauthorizedAccessException("RefreshTokenNotAvailable");
         }
 
         if (user.RefreshTokenExpiryTime is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
         {
             throw new UnauthorizedAccessException(
-                "Refresh token has expired.");
+                "RefreshTokenExpired");
         }
 
         var receivedRefreshTokenHash =
             HashRefreshToken(
                 request.RefreshToken);
 
-        if (!CryptographicOperations.FixedTimeEquals(
+        byte[] storedHash;
+        byte[] receivedHash;
+
+        try
+        {
+            storedHash =
                 Convert.FromBase64String(
-                    user.RefreshTokenHash),
+                    user.RefreshTokenHash);
+
+            receivedHash =
                 Convert.FromBase64String(
-                    receivedRefreshTokenHash)))
+                    receivedRefreshTokenHash);
+        }
+        catch (FormatException)
         {
             throw new UnauthorizedAccessException(
-                "Invalid refresh token.");
+                "InvalidRefreshToken");
         }
 
-        return await CreateAuthenticationResponseAsync(user);
+        if (!CryptographicOperations.FixedTimeEquals(
+                storedHash,
+                receivedHash))
+        {
+            throw new UnauthorizedAccessException(
+                "InvalidRefreshToken");
+        }
+
+        return await CreateAuthenticationResponseAsync(
+            user);
     }
 
     public async Task LogoutAsync(string userId)
@@ -163,7 +172,8 @@ public class AuthenticationService : IAuthenticationService
 
         if (user is null)
         {
-            return;
+            throw new KeyNotFoundException(
+                "UserNotFound");
         }
 
         user.RefreshTokenHash = null;
@@ -181,13 +191,13 @@ public class AuthenticationService : IAuthenticationService
 
     private async Task<AuthenticationResponse>CreateAuthenticationResponseAsync(ApplicationUser user)
     {
+        var accessTokenExpiration = _tokenService.GetAccessTokenExpirationTime();
+
+        var refreshTokenExpiration = _tokenService.GetRefreshTokenExpirationTime();
+
         var accessToken = await _tokenService.CreateAccessTokenAsync(user);
 
         var refreshToken = _tokenService.CreateRefreshToken();
-
-        var accessTokenExpiration =_tokenService.GetAccessTokenExpirationTime();
-
-        var refreshTokenExpiration = _tokenService.GetRefreshTokenExpirationTime();
 
         user.RefreshTokenHash = HashRefreshToken(refreshToken);
 
