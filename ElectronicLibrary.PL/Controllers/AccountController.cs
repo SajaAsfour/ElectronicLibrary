@@ -166,22 +166,73 @@ public class AccountController : ControllerBase
         });
     }
 
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>> ChangePassword(
+        ChangePasswordRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.ChangePasswordAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "PasswordChangedSuccessfully"].Value
+        });
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(
+        typeof(CurrentUserResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<CurrentUserResponse>>
+        GetCurrentUser()
+    {
+        var userId = GetAuthenticatedUserId();
+
+        var response =
+            await _authenticationService.GetCurrentUserAsync(
+                userId);
+
+        return Ok(response);
+    }
+
     [HttpPost("logout")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Logout()
     {
-        var userId = User.FindFirstValue(
-            ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return Unauthorized();
-        }
+        var userId = GetAuthenticatedUserId();
 
         await _authenticationService.LogoutAsync(userId);
 
         return NoContent();
     }
+    private string GetAuthenticatedUserId()
+    {
+        var userId = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new UnauthorizedAccessException(
+                "UnauthorizedRequest");
+        }
+
+        return userId;
+    }
+
 }

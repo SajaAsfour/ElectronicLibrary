@@ -1,10 +1,10 @@
 ﻿using ElectronicLibrary.BLL.Exceptions;
 using ElectronicLibrary.BLL.Interfaces.Email;
 using ElectronicLibrary.BLL.Options;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
-using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
 namespace ElectronicLibrary.BLL.Services.Email;
@@ -123,7 +123,10 @@ public class EmailService : IEmailService
         }
     }
 
-    private static string BuildActionUrl(string baseUrl, string userId, string token)
+    private static string BuildActionUrl(
+        string baseUrl,
+        string userId,
+        string token)
     {
         var separator = baseUrl.Contains('?') ? "&" : "?";
 

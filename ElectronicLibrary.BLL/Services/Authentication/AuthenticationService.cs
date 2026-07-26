@@ -5,10 +5,10 @@ using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
 using ElectronicLibrary.DAL.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.WebUtilities;
 
 namespace ElectronicLibrary.BLL.Services.Authentication;
 
@@ -252,8 +252,8 @@ public class AuthenticationService : IAuthenticationService
         }
 
         if (!TryDecodeIdentityToken(
-        request.Token,
-        out var decodedToken))
+                request.Token,
+                out var decodedToken))
         {
             throw new InvalidOperationException(
                 "InvalidEmailConfirmationToken");
@@ -364,6 +364,78 @@ public class AuthenticationService : IAuthenticationService
         }
     }
 
+    public async Task ChangePasswordAsync(
+        string userId,
+        ChangePasswordRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new KeyNotFoundException(
+                "UserNotFound");
+        }
+
+        var changePasswordResult =
+            await _userManager.ChangePasswordAsync(
+                user,
+                request.CurrentPassword,
+                request.NewPassword);
+
+        if (!changePasswordResult.Succeeded)
+        {
+            if (changePasswordResult.Errors.Any(error =>
+                    string.Equals(
+                        error.Code,
+                        "PasswordMismatch",
+                        StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException(
+                    "CurrentPasswordIncorrect");
+            }
+
+            throw new InvalidOperationException(
+                FormatIdentityErrors(
+                    changePasswordResult.Errors));
+        }
+
+        user.RefreshTokenHash = null;
+        user.RefreshTokenExpiryTime = null;
+
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            throw new InvalidOperationException(
+                FormatIdentityErrors(updateResult.Errors));
+        }
+    }
+
+    public async Task<CurrentUserResponse> GetCurrentUserAsync(
+        string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null || user.IsDeleted)
+        {
+            throw new KeyNotFoundException(
+                "UserNotFound");
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return new CurrentUserResponse
+        {
+            UserId = user.Id,
+            FullName = user.FullName,
+            Email = user.Email ?? string.Empty,
+            City = user.City,
+            Address = user.Address,
+            EmailConfirmed = user.EmailConfirmed,
+            Roles = roles.ToList()
+        };
+    }
+
     public async Task LogoutAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
@@ -438,9 +510,10 @@ public class AuthenticationService : IAuthenticationService
             Roles = roles.ToList()
         };
     }
+
     private static bool TryDecodeIdentityToken(
-    string encodedToken,
-    out string decodedToken)
+        string encodedToken,
+        out string decodedToken)
     {
         decodedToken = string.Empty;
 

@@ -108,4 +108,10 @@
 	<data name="PasswordResetSuccessful" xml:space="preserve">
     <value>Your password has been reset successfully. You can now sign in with the new password.</value>
   </data>
+	<data name="CurrentPasswordIncorrect" xml:space="preserve">
+    <value>The current password is incorrect.</value>
+  </data>
+	<data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>Your password has been changed successfully.</value>
+  </data>
 </root>

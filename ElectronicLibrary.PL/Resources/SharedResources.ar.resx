@@ -1,130 +1,136 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:schema id="root">
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xs:element name="root" ns1:IsDataSet="true">
-      <xs:complexType>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element name="metadata">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" />
-              </xs:sequence>
-              <xs:attribute name="name" use="required" type="xsd:string" />
-              <xs:attribute name="type" type="xsd:string" />
-              <xs:attribute name="mimetype" type="xsd:string" />
-              <xs:attribute ref="xml:space" />
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="assembly">
-            <xs:complexType>
-              <xs:attribute name="alias" type="xsd:string" />
-              <xs:attribute name="name" type="xsd:string" />
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="data">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
-              </xs:sequence>
-              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
-              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
-              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
-              <xs:attribute ref="xml:space" />
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="resheader">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
-              </xs:sequence>
-              <xs:attribute name="name" type="xsd:string" use="required" />
-            </xs:complexType>
-          </xs:element>
-        </xs:choice>
-      </xs:complexType>
-    </xs:element>
-  </xs:schema>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="InvalidAccessToken" xml:space="preserve">
+	<xs:schema id="root">
+		<xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+		<xs:element name="root" ns1:IsDataSet="true">
+			<xs:complexType>
+				<xs:choice maxOccurs="unbounded">
+					<xs:element name="metadata">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xsd:string" minOccurs="0" />
+							</xs:sequence>
+							<xs:attribute name="name" use="required" type="xsd:string" />
+							<xs:attribute name="type" type="xsd:string" />
+							<xs:attribute name="mimetype" type="xsd:string" />
+							<xs:attribute ref="xml:space" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="assembly">
+						<xs:complexType>
+							<xs:attribute name="alias" type="xsd:string" />
+							<xs:attribute name="name" type="xsd:string" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="data">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+								<xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+							</xs:sequence>
+							<xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+							<xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+							<xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+							<xs:attribute ref="xml:space" />
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="resheader">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+							</xs:sequence>
+							<xs:attribute name="name" type="xsd:string" use="required" />
+						</xs:complexType>
+					</xs:element>
+				</xs:choice>
+			</xs:complexType>
+		</xs:element>
+	</xs:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="InvalidAccessToken" xml:space="preserve">
     <value>رمز الوصول غير صالح.</value>
   </data>
-  <data name="InvalidCredentials" xml:space="preserve">
+	<data name="InvalidCredentials" xml:space="preserve">
     <value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value>
   </data>
-  <data name="InvalidRefreshToken" xml:space="preserve">
+	<data name="InvalidRefreshToken" xml:space="preserve">
     <value>رمز التحديث غير صالح.</value>
   </data>
-  <data name="LoginSuccessful" xml:space="preserve">
+	<data name="LoginSuccessful" xml:space="preserve">
     <value>تم تسجيل الدخول بنجاح.</value>
   </data>
-  <data name="LogoutSuccessful" xml:space="preserve">
+	<data name="LogoutSuccessful" xml:space="preserve">
     <value>تم تسجيل الخروج بنجاح.</value>
   </data>
-  <data name="RefreshTokenExpired" xml:space="preserve">
+	<data name="RefreshTokenExpired" xml:space="preserve">
     <value>انتهت صلاحية رمز التحديث.</value>
   </data>
-  <data name="RefreshTokenNotAvailable" xml:space="preserve">
+	<data name="RefreshTokenNotAvailable" xml:space="preserve">
     <value>رمز التحديث غير متوفر.</value>
   </data>
-  <data name="RegistrationSuccessful" xml:space="preserve">
+	<data name="RegistrationSuccessful" xml:space="preserve">
     <value>تم إنشاء الحساب بنجاح.</value>
   </data>
-  <data name="ResourceNotFound" xml:space="preserve">
+	<data name="ResourceNotFound" xml:space="preserve">
     <value>العنصر المطلوب غير موجود.</value>
   </data>
-  <data name="UnauthorizedRequest" xml:space="preserve">
+	<data name="UnauthorizedRequest" xml:space="preserve">
     <value>غير مصرح بتنفيذ هذا الطلب.</value>
   </data>
-  <data name="UnexpectedError" xml:space="preserve">
+	<data name="UnexpectedError" xml:space="preserve">
     <value>حدث خطأ غير متوقع.</value>
   </data>
-  <data name="UserAlreadyExists" xml:space="preserve">
+	<data name="UserAlreadyExists" xml:space="preserve">
     <value>يوجد مستخدم مسجل بهذا البريد الإلكتروني مسبقًا.</value>
   </data>
-  <data name="UserNotFound" xml:space="preserve">
+	<data name="UserNotFound" xml:space="preserve">
     <value>المستخدم غير موجود.</value>
   </data>
-  <data name="AccountLocked" xml:space="preserve">
+	<data name="AccountLocked" xml:space="preserve">
     <value>تم قفل الحساب مؤقتًا بسبب تكرار محاولات تسجيل الدخول الفاشلة.</value>
   </data>
-  <data name="EmailNotConfirmed" xml:space="preserve">
+	<data name="EmailNotConfirmed" xml:space="preserve">
     <value>يرجى تأكيد البريد الإلكتروني قبل تسجيل الدخول.</value>
   </data>
-  <data name="InvalidEmailConfirmationToken" xml:space="preserve">
+	<data name="InvalidEmailConfirmationToken" xml:space="preserve">
     <value>رمز تأكيد البريد الإلكتروني غير صالح أو انتهت صلاحيته.</value>
   </data>
-  <data name="EmailConfirmedSuccessfully" xml:space="preserve">
+	<data name="EmailConfirmedSuccessfully" xml:space="preserve">
     <value>تم تأكيد البريد الإلكتروني بنجاح.</value>
   </data>
-  <data name="ConfirmationEmailRequestAccepted" xml:space="preserve">
+	<data name="ConfirmationEmailRequestAccepted" xml:space="preserve">
     <value>إذا كان الحساب موجودًا ومؤهلًا، فقد تم إرسال رسالة تأكيد إليه.</value>
   </data>
-  <data name="RegistrationPendingEmailConfirmation" xml:space="preserve">
+	<data name="RegistrationPendingEmailConfirmation" xml:space="preserve">
     <value>تم إنشاء الحساب. يرجى التحقق من بريدك الإلكتروني لتأكيده.</value>
   </data>
-  <data name="EmailDeliveryFailed" xml:space="preserve">
+	<data name="EmailDeliveryFailed" xml:space="preserve">
     <value>تعذر إرسال البريد الإلكتروني حاليًا. يرجى المحاولة لاحقًا.</value>
   </data>
-  <data name="PasswordResetRequestAccepted" xml:space="preserve">
+	<data name="PasswordResetRequestAccepted" xml:space="preserve">
     <value>إذا كان الحساب موجودًا ومؤهلًا، فقد تم إرسال تعليمات إعادة تعيين كلمة المرور.</value>
   </data>
-  <data name="InvalidPasswordResetToken" xml:space="preserve">
+	<data name="InvalidPasswordResetToken" xml:space="preserve">
     <value>رمز إعادة تعيين كلمة المرور غير صالح أو انتهت صلاحيته.</value>
   </data>
-  <data name="PasswordResetSuccessful" xml:space="preserve">
+	<data name="PasswordResetSuccessful" xml:space="preserve">
     <value>تمت إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.</value>
+  </data>
+	<data name="CurrentPasswordIncorrect" xml:space="preserve">
+    <value>كلمة المرور الحالية غير صحيحة.</value>
+  </data>
+	<data name="PasswordChangedSuccessfully" xml:space="preserve">
+    <value>تم تغيير كلمة المرور بنجاح.</value>
   </data>
 </root>
