@@ -1,5 +1,6 @@
 ﻿using ElectronicLibrary.DAL.Enums;
 using ElectronicLibrary.DAL.Models.Catalog;
+using ElectronicLibrary.DAL.Models.Identity;
 using ElectronicLibrary.DAL.Models.Orders;
 using ElectronicLibrary.DAL.Models.Shopping;
 
@@ -23,11 +24,11 @@ public class Listing
 
     public int BookId { get; set; }
 
-    public int SellerId { get; set; }
-
     public Book Book { get; set; } = null!;
 
-    public Seller Seller { get; set; } = null!;
+    public string SellerId { get; set; } = null!;
+
+    public ApplicationUser Seller { get; set; } = null!;
 
     public ICollection<CartItem> CartItems { get; set; } = [];
 

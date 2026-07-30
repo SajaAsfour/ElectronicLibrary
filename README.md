@@ -1,10 +1,10 @@
-# Electronic Library Marketplace API
+﻿# Electronic Library Marketplace API
 
 ## Project Overview
 
 Electronic Library Marketplace is an ASP.NET Core Web API that allows users to browse, buy, and sell books through an online marketplace.
 
-The project separates the general information of a book from the seller listing. This allows multiple sellers to offer the same book with different prices, quantities, formats, and conditions.
+The project separates the general information of a book from each user listing. Users with the Seller role can offer the same book with different prices, quantities, formats, and conditions.
 
 ---
 
@@ -36,7 +36,7 @@ The current phase includes:
 
 - Admin
 - Customer
-- Seller
+- Seller role on ApplicationUser
 
 ---
 
@@ -120,7 +120,7 @@ Contains:
 # Main Database Models
 
 - ApplicationUser
-- Seller
+- Seller role on ApplicationUser
 - Book
 - Author
 - Publisher
@@ -169,9 +169,9 @@ Contains:
 - Condition
 - Discount Percentage
 - Status
-- Seller
+- Seller role on ApplicationUser
 
-This allows multiple sellers to sell the same book with different prices and conditions.
+This allows multiple users with the Seller role to sell the same book with different prices and conditions.
 
 ---
 
@@ -182,8 +182,8 @@ This allows multiple sellers to sell the same book with different prices and con
 - Book → Categories (Many-to-Many)
 - Book → Images
 - Book → Listings
-- Seller → Listings
-- User → Seller Profile
+- ApplicationUser (Seller role) → Listings
+- Seller profile fields are stored directly on ApplicationUser
 - User → Cart
 - Cart → CartItems
 - Listing → CartItems
@@ -362,7 +362,7 @@ The application contains the following roles:
 
 - Admin
 - Customer
-- Seller
+- Seller role on ApplicationUser
 
 The roles are automatically created when the application starts.
 

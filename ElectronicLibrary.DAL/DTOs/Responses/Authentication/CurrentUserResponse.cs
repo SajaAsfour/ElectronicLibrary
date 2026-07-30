@@ -12,6 +12,12 @@ public class CurrentUserResponse
 
     public string? Address { get; set; }
 
+    public string? StoreName { get; set; }
+
+    public string? SellerBio { get; set; }
+
+    public decimal? SellerRating { get; set; }
+
     public bool EmailConfirmed { get; set; }
 
     public ICollection<string> Roles { get; set; } = [];

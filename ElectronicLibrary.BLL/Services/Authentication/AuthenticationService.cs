@@ -367,6 +367,9 @@ public class AuthenticationService : IAuthenticationService
             Email = user.Email ?? string.Empty,
             City = user.City,
             Address = user.Address,
+            StoreName = user.StoreName,
+            SellerBio = user.SellerBio,
+            SellerRating = user.SellerRating,
             EmailConfirmed = user.EmailConfirmed,
             Roles = roles.ToList()
         };
@@ -379,6 +382,26 @@ public class AuthenticationService : IAuthenticationService
         var user = await GetActiveUserAsync(userId);
 
         user.FullName = request.FullName.Trim();
+
+        await UpdateUserAsync(user);
+    }
+
+    public async Task UpdateSellerProfileAsync(
+        string userId,
+        UpdateSellerProfileRequest request)
+    {
+        var user = await GetActiveUserAsync(userId);
+
+        if (!await _userManager.IsInRoleAsync(
+                user,
+                ApplicationRoles.Seller))
+        {
+            throw new UnauthorizedAccessException(
+                "SellerRoleRequired");
+        }
+
+        user.StoreName = request.StoreName.Trim();
+        user.SellerBio = NormalizeOptionalValue(request.Bio);
 
         await UpdateUserAsync(user);
     }

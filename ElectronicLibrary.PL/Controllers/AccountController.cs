@@ -1,4 +1,5 @@
 ﻿using ElectronicLibrary.BLL.Interfaces.Authentication;
+using ElectronicLibrary.DAL.Constants;
 using ElectronicLibrary.DAL.DTOs.Requests.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses.Authentication;
 using ElectronicLibrary.DAL.DTOs.Responses.Common;
@@ -242,6 +243,31 @@ public class AccountController : ControllerBase
         var userId = GetAuthenticatedUserId();
 
         await _authenticationService.UpdateProfileAsync(
+            userId,
+            request);
+
+        return Ok(new MessageResponse
+        {
+            Message = _localizer[
+                "ProfileUpdatedSuccessfully"].Value
+        });
+    }
+
+    [HttpPut("seller-profile")]
+    [Authorize(Roles = ApplicationRoles.Seller)]
+    [ProducesResponseType(
+        typeof(MessageResponse),
+        StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<MessageResponse>>
+        UpdateSellerProfile(UpdateSellerProfileRequest request)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        await _authenticationService.UpdateSellerProfileAsync(
             userId,
             request);
 

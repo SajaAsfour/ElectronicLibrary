@@ -1,8 +1,9 @@
 ﻿using ElectronicLibrary.DAL.Models.Marketplace;
 using ElectronicLibrary.DAL.Models.Orders;
-using ElectronicLibrary.DAL.Models.Shopping;
 using ElectronicLibrary.DAL.Models.Reviews;
+using ElectronicLibrary.DAL.Models.Shopping;
 using Microsoft.AspNetCore.Identity;
+
 namespace ElectronicLibrary.DAL.Models.Identity;
 
 public class ApplicationUser : IdentityUser
@@ -13,6 +14,12 @@ public class ApplicationUser : IdentityUser
 
     public string? Address { get; set; }
 
+    public string? StoreName { get; set; }
+
+    public string? SellerBio { get; set; }
+
+    public decimal? SellerRating { get; set; }
+
     public string? RefreshTokenHash { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
@@ -21,9 +28,9 @@ public class ApplicationUser : IdentityUser
 
     public DateTime? DeletedAt { get; set; }
 
-    public Seller? SellerProfile { get; set; }
-
     public Cart? Cart { get; set; }
+
+    public ICollection<Listing> Listings { get; set; } = [];
 
     public ICollection<Order> Orders { get; set; } = [];
 

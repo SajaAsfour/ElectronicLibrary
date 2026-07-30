@@ -20,6 +20,15 @@ public class ApplicationUserConfiguration
         builder.Property(x => x.Address)
             .HasMaxLength(500);
 
+        builder.Property(x => x.StoreName)
+            .HasMaxLength(150);
+
+        builder.Property(x => x.SellerBio)
+            .HasMaxLength(1000);
+
+        builder.Property(x => x.SellerRating)
+            .HasPrecision(3, 2);
+
         builder.Property(x => x.RefreshTokenHash)
             .HasMaxLength(500);
     }

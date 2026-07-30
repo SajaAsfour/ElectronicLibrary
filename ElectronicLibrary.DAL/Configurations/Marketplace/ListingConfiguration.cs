@@ -20,6 +20,9 @@ public class ListingConfiguration
         builder.Property(x => x.DiscountPercentage)
             .HasPrecision(5, 2);
 
+        builder.Property(x => x.SellerId)
+            .IsRequired();
+
         builder.HasOne(x => x.Book)
             .WithMany(x => x.Listings)
             .HasForeignKey(x => x.BookId)

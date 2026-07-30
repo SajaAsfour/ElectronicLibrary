@@ -21,8 +21,6 @@ public class ApplicationDbContext
     {
     }
 
-    public DbSet<Seller> Sellers => Set<Seller>();
-
     public DbSet<Book> Books => Set<Book>();
 
     public DbSet<Author> Authors => Set<Author>();
