@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="ElectronicLibrary.BLL/ElectronicLibrary.BLL.csproj" />
   <Project Path="ElectronicLibrary.DAL/ElectronicLibrary.DAL.csproj" />
+  <Project Path="ElectronicLibrary.IntegrationTests/ElectronicLibrary.IntegrationTests.csproj" />
   <Project Path="ElectronicLibrary.PL/ElectronicLibrary.PL.csproj" />
+  <Project Path="ElectronicLibrary.UnitTests/ElectronicLibrary.UnitTests.csproj" />
 </Solution>
