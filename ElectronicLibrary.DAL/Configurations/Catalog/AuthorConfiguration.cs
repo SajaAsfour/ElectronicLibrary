@@ -20,5 +20,28 @@ public class AuthorConfiguration
 
         builder.Property(x => x.Biography)
             .HasMaxLength(3000);
+
+        builder.Property(x => x.CreatedAt)
+            .HasDefaultValueSql("SYSUTCDATETIME()")
+            .IsRequired();
+
+        builder.Property(x => x.CreatedById)
+            .HasMaxLength(450);
+
+        builder.Property(x => x.UpdatedById)
+            .HasMaxLength(450);
+
+        builder.Property(x => x.DeletedById)
+            .HasMaxLength(450);
+
+        builder.Property(x => x.IsDeleted)
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.HasIndex(x => x.Name)
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
+
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
