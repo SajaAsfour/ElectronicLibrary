@@ -1,6 +1,8 @@
 ﻿using ElectronicLibrary.DAL.DTOs.Requests.Authors;
 using ElectronicLibrary.DAL.DTOs.Responses.Authors;
 using ElectronicLibrary.DAL.Models.Catalog;
+using ElectronicLibrary.DAL.DTOs.Requests.Categories;
+using ElectronicLibrary.DAL.DTOs.Responses.Categories;
 using ElectronicLibrary.DAL.DTOs.Requests.Publishers;
 using ElectronicLibrary.DAL.DTOs.Responses.Publishers;
 using Mapster;
@@ -79,5 +81,41 @@ public sealed class MapsterConfig : IRegister
             .Map(
                 destination => destination.Books,
                 source => source.Books);
+
+        config.NewConfig<CreateCategoryRequest, Category>()
+            .Map(
+                destination => destination.Name,
+                source => source.Name.Trim())
+            .Map(
+                destination => destination.Description,
+                source => string.IsNullOrWhiteSpace(source.Description)
+                   ? null
+                   : source.Description.Trim())
+                .IgnoreNonMapped(true);
+
+        config.NewConfig<UpdateCategoryRequest, Category>()
+            .Map(
+                destination => destination.Name,
+                source => source.Name.Trim())
+            .Map(
+                destination => destination.Description,
+                source => string.IsNullOrWhiteSpace(source.Description)
+                    ? null
+                    : source.Description.Trim())
+            .IgnoreNonMapped(true);
+
+        config.NewConfig<Category, CategoryResponse>()
+            .Map(
+                destination => destination.BooksCount,
+                source => source.BookCategories.Count);
+
+        config.NewConfig<Book, CategoryBookResponse>();
+
+        config.NewConfig<Category, CategoryDetailsResponse>()
+            .Map(
+                destination => destination.Books,
+                source => source.BookCategories.Select(
+                    bookCategory => bookCategory.Book));
+
     }
 }

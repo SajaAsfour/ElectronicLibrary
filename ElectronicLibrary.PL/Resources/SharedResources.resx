@@ -189,4 +189,19 @@
 	<data name="PublisherDeletedSuccessfully" xml:space="preserve">
     <value>The publisher was deleted successfully.</value>
   </data>
+	<data name="CategoryNotFound" xml:space="preserve">
+    <value>Category was not found.</value>
+  </data>
+
+	<data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>An active category with this name already exists.</value>
+  </data>
+
+	<data name="CategoryHasBooks" xml:space="preserve">
+    <value>The category cannot be deleted because it is associated with one or more books.</value>
+  </data>
+
+	<data name="CategoryDeletedSuccessfully" xml:space="preserve">
+    <value>The category was deleted successfully.</value>
+  </data>
 </root>
