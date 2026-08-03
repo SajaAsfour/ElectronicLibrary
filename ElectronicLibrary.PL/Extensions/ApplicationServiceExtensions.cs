@@ -28,6 +28,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IPublisherService, PublisherService>();
 
+        services.AddScoped<ICategoryService, CategoryService>();
+
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();

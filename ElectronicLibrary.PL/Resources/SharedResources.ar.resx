@@ -208,4 +208,19 @@
 	<data name="PublisherDeletedSuccessfully" xml:space="preserve">
     <value>تم حذف دار النشر بنجاح.</value>
   </data>
+	<data name="CategoryNotFound" xml:space="preserve">
+    <value>التصنيف غير موجود.</value>
+  </data>
+
+	<data name="CategoryNameAlreadyExists" xml:space="preserve">
+    <value>يوجد تصنيف فعال بهذا الاسم مسبقًا.</value>
+  </data>
+
+	<data name="CategoryHasBooks" xml:space="preserve">
+    <value>لا يمكن حذف التصنيف لأنه مرتبط بكتاب واحد أو أكثر.</value>
+  </data>
+
+	<data name="CategoryDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف التصنيف بنجاح.</value>
+  </data>
 </root>
