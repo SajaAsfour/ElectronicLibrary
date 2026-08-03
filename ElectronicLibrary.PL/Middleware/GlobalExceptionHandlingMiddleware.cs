@@ -39,6 +39,17 @@ public class GlobalExceptionHandlingMiddleware
                 HttpStatusCode.Unauthorized,
                 GetLocalizedMessage(exception.Message));
         }
+        catch (ConflictException exception)
+        {
+            _logger.LogWarning(
+                exception,
+                "A conflict occurred while processing the request.");
+
+            await WriteErrorResponseAsync(
+                context,
+                HttpStatusCode.Conflict,
+                GetLocalizedMessage(exception.Message));
+        }
         catch (EmailDeliveryException exception)
         {
             _logger.LogError(
