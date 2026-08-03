@@ -159,4 +159,19 @@
   <data name="CannotRemoveOnlyRole" xml:space="preserve">
     <value>A user must have at least one role.</value>
   </data>
+	<data name="AuthorNotFound" xml:space="preserve">
+    <value>Author was not found.</value>
+  </data>
+	<data name="AuthorNameAlreadyExists" xml:space="preserve">
+    <value>An active author with this name already exists.</value>
+  </data>
+	<data name="AuthorHasBooks" xml:space="preserve">
+    <value>The author cannot be deleted because they are associated with one or more books.</value>
+  </data>
+	<data name="AuthorDeletedSuccessfully" xml:space="preserve">
+    <value>The author was deleted successfully.</value>
+  </data>
+	<data name="InvalidPaginationParameters" xml:space="preserve">
+    <value>The pagination parameters are invalid.</value>
+  </data>
 </root>
