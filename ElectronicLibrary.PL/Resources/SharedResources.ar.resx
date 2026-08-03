@@ -193,4 +193,19 @@
 	<data name="InvalidPaginationParameters" xml:space="preserve">
     <value>بيانات ترقيم الصفحات غير صالحة.</value>
   </data>
+	<data name="PublisherNotFound" xml:space="preserve">
+    <value>دار النشر غير موجودة.</value>
+  </data>
+
+	<data name="PublisherNameAlreadyExists" xml:space="preserve">
+    <value>توجد دار نشر فعالة بهذا الاسم مسبقًا.</value>
+  </data>
+
+	<data name="PublisherHasBooks" xml:space="preserve">
+    <value>لا يمكن حذف دار النشر لأنها مرتبطة بكتاب واحد أو أكثر.</value>
+  </data>
+
+	<data name="PublisherDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف دار النشر بنجاح.</value>
+  </data>
 </root>
