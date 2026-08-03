@@ -40,8 +40,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await DatabaseSeeder.SeedAsync(
-    app.Services,
-    app.Configuration);
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    await DatabaseSeeder.SeedAsync(
+        app.Services,
+        app.Configuration);
+}
 
 app.Run();
+
+public partial class Program;
