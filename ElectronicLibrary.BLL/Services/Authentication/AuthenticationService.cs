@@ -516,7 +516,7 @@ public class AuthenticationService : IAuthenticationService
         }
     }
 
-    private static string? NormalizeOptionalValue(string value)
+    private static string? NormalizeOptionalValue(string? value)
     {
         return string.IsNullOrWhiteSpace(value)
             ? null
