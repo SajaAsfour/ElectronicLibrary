@@ -5,7 +5,9 @@ using ElectronicLibrary.BLL.Interfaces.UserManagement;
 using ElectronicLibrary.BLL.Mapping;
 using ElectronicLibrary.BLL.Services.Authentication;
 using ElectronicLibrary.BLL.Services.Catalog;
-using ElectronicLibrary.BLL.Services.Common;
+using ElectronicLibrary.PL.Services.Common;
+using ElectronicLibrary.BLL.Interfaces.Sellers;
+using ElectronicLibrary.BLL.Services.Sellers;
 using ElectronicLibrary.BLL.Services.UserManagement;
 using ElectronicLibrary.DAL.Repositories.Generic;
 using ElectronicLibrary.DAL.Repositories.UnitOfWork;
@@ -31,6 +33,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ICategoryService, CategoryService>();
 
         services.AddScoped<IBookService, BookService>();
+
+        services.AddScoped<ISellerService, SellerService>();
 
         services.AddScoped<ITokenService, TokenService>();
 

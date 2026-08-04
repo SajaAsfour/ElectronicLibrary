@@ -303,4 +303,39 @@
     <value>A book cannot have more than ten images.</value>
   </data>
 	
+	<data name="SellerProfileAlreadyActivated" xml:space="preserve">
+  <value>The seller profile is already activated for this account.</value>
+</data>
+
+<data name="StoreNameAlreadyExists" xml:space="preserve">
+  <value>This store name is already in use.</value>
+</data>
+
+<data name="StoreNameRequired" xml:space="preserve">
+  <value>Store name is required.</value>
+</data>
+
+<data name="StoreNameTooLong" xml:space="preserve">
+  <value>Store name must not exceed 150 characters.</value>
+</data>
+
+<data name="SellerBioTooLong" xml:space="preserve">
+  <value>Seller bio must not exceed 1000 characters.</value>
+</data>
+
+<data name="CityTooLong" xml:space="preserve">
+  <value>City must not exceed 100 characters.</value>
+</data>
+
+<data name="AddressTooLong" xml:space="preserve">
+  <value>Address must not exceed 500 characters.</value>
+</data>
+
+<data name="SellerNotFound" xml:space="preserve">
+  <value>Seller profile was not found.</value>
+</data>
+
+<data name="SellerRoleRequired" xml:space="preserve">
+  <value>Activate your seller profile before accessing this feature.</value>
+</data>
 </root>

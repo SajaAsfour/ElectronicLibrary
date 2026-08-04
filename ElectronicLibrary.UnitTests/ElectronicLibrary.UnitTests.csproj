@@ -23,5 +23,9 @@
     <ProjectReference Include="..\ElectronicLibrary.BLL\ElectronicLibrary.BLL.csproj" />
     <ProjectReference Include="..\ElectronicLibrary.DAL\ElectronicLibrary.DAL.csproj" />
   </ItemGroup>
+	
+  <ItemGroup>
+     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
 </Project>

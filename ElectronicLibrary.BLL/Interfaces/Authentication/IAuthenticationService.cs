@@ -32,10 +32,6 @@ public interface IAuthenticationService
         string userId,
         UpdateProfileRequest request);
 
-    Task UpdateSellerProfileAsync(
-        string userId,
-        UpdateSellerProfileRequest request);
-
     Task UpdateAddressAsync(
         string userId,
         UpdateAddressRequest request);

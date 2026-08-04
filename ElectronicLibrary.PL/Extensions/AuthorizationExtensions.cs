@@ -15,6 +15,12 @@ public static class AuthorizationExtensions
                 policy => policy
                     .RequireAuthenticatedUser()
                     .RequireRole(ApplicationRoles.Admin));
+
+            options.AddPolicy(
+                AuthorizationPolicyNames.SellerOnly,
+                policy => policy
+                    .RequireAuthenticatedUser()
+                    .RequireRole(ApplicationRoles.Seller));
         });
 
         return services;
