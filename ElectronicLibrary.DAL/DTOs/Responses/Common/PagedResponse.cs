@@ -2,7 +2,7 @@
 
 public class PagedResponse<T>
 {
-    public ICollection<T> Items { get; set; } = [];
+    public IReadOnlyCollection<T> Items { get; set; } = Array.Empty<T>();
 
     public int PageNumber { get; set; }
 

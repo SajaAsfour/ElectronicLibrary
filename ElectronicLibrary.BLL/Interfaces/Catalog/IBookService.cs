@@ -1,13 +1,15 @@
 ﻿using ElectronicLibrary.DAL.DTOs.Requests.Books;
 using ElectronicLibrary.DAL.DTOs.Responses.Books;
 using ElectronicLibrary.BLL.Models.Storage;
+using ElectronicLibrary.DAL.DTOs.Responses.Common;
 
 namespace ElectronicLibrary.BLL.Interfaces.Catalog;
 
 public interface IBookService
 {
-    Task<IReadOnlyCollection<BookResponse>> GetBooksAsync(
-        CancellationToken cancellationToken = default);
+    Task<PagedResponse<BookResponse>> GetBooksAsync(
+    BookFilterRequest request,
+    CancellationToken cancellationToken = default);
 
     Task<BookDetailsResponse> GetBookByIdAsync(
         int bookId,

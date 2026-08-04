@@ -30,15 +30,28 @@ public class BooksController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(
-        typeof(IReadOnlyCollection<BookResponse>),
-        StatusCodes.Status200OK)]
-    public async Task<ActionResult<IReadOnlyCollection<BookResponse>>>
-        GetBooks(
-            CancellationToken cancellationToken)
+    typeof(PagedResponse<BookResponse>),
+    StatusCodes.Status200OK)]
+    public async Task<ActionResult<PagedResponse<BookResponse>>>
+    GetBooks(
+        [FromQuery] BookFilterRequest request,
+        CancellationToken cancellationToken)
     {
-        IReadOnlyCollection<BookResponse> response =
+        PagedResponse<BookResponse> response =
             await _bookService.GetBooksAsync(
+                request,
                 cancellationToken);
+
+        foreach (BookResponse book in response.Items)
+        {
+            if (!string.IsNullOrWhiteSpace(
+                    book.MainImageUrl))
+            {
+                book.MainImageUrl =
+                    ToAbsoluteUrl(
+                        book.MainImageUrl);
+            }
+        }
 
         return Ok(response);
     }
