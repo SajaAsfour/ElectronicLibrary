@@ -26,5 +26,9 @@ public class ReviewConfiguration
             .WithMany(x => x.Reviews)
             .HasForeignKey(x => x.BookId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(
+            review =>
+                !review.Book.IsDeleted);
     }
 }

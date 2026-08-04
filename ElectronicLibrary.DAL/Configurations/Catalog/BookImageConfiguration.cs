@@ -22,5 +22,9 @@ public class BookImageConfiguration
             .WithMany(x => x.BookImages)
             .HasForeignKey(x => x.BookId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasQueryFilter(
+            bookImage =>
+                !bookImage.Book.IsDeleted);
     }
 }

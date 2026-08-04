@@ -32,5 +32,9 @@ public class ListingConfiguration
             .WithMany(x => x.Listings)
             .HasForeignKey(x => x.SellerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasQueryFilter(
+            listing =>
+                !listing.Book.IsDeleted);
     }
 }

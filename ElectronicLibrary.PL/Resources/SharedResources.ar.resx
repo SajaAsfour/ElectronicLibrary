@@ -223,4 +223,103 @@
 	<data name="CategoryDeletedSuccessfully" xml:space="preserve">
     <value>تم حذف التصنيف بنجاح.</value>
   </data>
+	<data name="BookNotFound" xml:space="preserve">
+    <value>الكتاب غير موجود.</value>
+  </data>
+
+	<data name="BookIsbnAlreadyExists" xml:space="preserve">
+    <value>يوجد كتاب فعال بنفس الرقم المعياري ISBN مسبقًا.</value>
+  </data>
+
+	<data name="InvalidIsbn" xml:space="preserve">
+    <value>يجب أن يتكون الرقم المعياري ISBN من 10 أو 13 رقمًا بالضبط.</value>
+  </data>
+
+	<data name="InvalidPublicationYear" xml:space="preserve">
+    <value>لا يمكن أن تكون سنة النشر أكبر من السنة الحالية.</value>
+  </data>
+
+	<data name="BookAuthorsRequired" xml:space="preserve">
+    <value>يجب تحديد مؤلف واحد على الأقل.</value>
+  </data>
+
+	<data name="BookCategoriesRequired" xml:space="preserve">
+    <value>يجب تحديد تصنيف واحد على الأقل.</value>
+  </data>
+
+	<data name="DuplicateAuthorIds" xml:space="preserve">
+    <value>لا يسمح بتكرار معرفات المؤلفين.</value>
+  </data>
+
+	<data name="DuplicateCategoryIds" xml:space="preserve">
+    <value>لا يسمح بتكرار معرفات التصنيفات.</value>
+  </data>
+
+	<data name="OneOrMoreAuthorsNotFound" xml:space="preserve">
+    <value>مؤلف واحد أو أكثر من المؤلفين المحددين غير موجود.</value>
+  </data>
+
+	<data name="OneOrMoreCategoriesNotFound" xml:space="preserve">
+    <value>تصنيف واحد أو أكثر من التصنيفات المحددة غير موجود.</value>
+  </data>
+
+	<data name="MultipleMainBookImages" xml:space="preserve">
+    <value>يمكن تحديد صورة رئيسية واحدة فقط للكتاب.</value>
+  </data>
+
+	<data name="DuplicateBookImageUrls" xml:space="preserve">
+    <value>لا يسمح بتكرار روابط صور الكتاب.</value>
+  </data>
+
+	<data name="BookDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف الكتاب بنجاح.</value>
+  </data>
+	<data name="InvalidBookImageUrl" xml:space="preserve">
+    <value>لا يمكن أن يكون رابط صورة الكتاب فارغًا.</value>
+  </data>
+	<data name="BookTitleRequired" xml:space="preserve">
+    <value>عنوان الكتاب مطلوب.</value>
+  </data>
+
+	<data name="BookLanguageRequired" xml:space="preserve">
+    <value>لغة الكتاب مطلوبة.</value>
+  </data>
+	<data name="BookImageFileRequired" xml:space="preserve">
+    <value>يجب اختيار ملف صورة.</value>
+  </data>
+
+	<data name="BookImageFileTooLarge" xml:space="preserve">
+    <value>حجم ملف الصورة أكبر من الحد المسموح.</value>
+  </data>
+
+	<data name="BookImageFileTypeNotAllowed" xml:space="preserve">
+    <value>نوع ملف الصورة المحدد غير مسموح.</value>
+  </data>
+
+	<data name="BookImageNotFound" xml:space="preserve">
+    <value>صورة الكتاب غير موجودة.</value>
+  </data>
+
+	<data name="BookImageUploadedSuccessfully" xml:space="preserve">
+    <value>تم رفع صورة الكتاب بنجاح.</value>
+  </data>
+
+	<data name="BookImageDeletedSuccessfully" xml:space="preserve">
+    <value>تم حذف صورة الكتاب بنجاح.</value>
+  </data>
+	<data name="InvalidBookImagePath" xml:space="preserve">
+    <value>مسار صورة الكتاب المحفوظة غير صالح.</value>
+  </data>
+	<data name="BookImagesRequired" xml:space="preserve">
+    <value>يجب رفع صورة واحدة على الأقل للكتاب.</value>
+  </data>
+
+	<data name="InvalidMainImageIndex" xml:space="preserve">
+    <value>رقم الصورة الرئيسية المحدد غير صالح.</value>
+  </data>
+
+	<data name="MaximumBookImagesExceeded" xml:space="preserve">
+    <value>لا يمكن أن يحتوي الكتاب على أكثر من عشر صور.</value>
+  </data>
+	
 </root>

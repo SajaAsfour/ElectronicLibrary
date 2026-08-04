@@ -27,5 +27,10 @@ public class BookAuthorConfiguration
             .WithMany(x => x.BookAuthors)
             .HasForeignKey(x => x.AuthorId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasQueryFilter(
+            bookAuthor =>
+                !bookAuthor.Book.IsDeleted &&
+                !bookAuthor.Author.IsDeleted);
     }
 }

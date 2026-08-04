@@ -12,29 +12,52 @@ public class BookConfiguration
     {
         builder.ToTable("Books");
 
-        builder.HasKey(x => x.BookId);
+        builder.HasKey(book => book.BookId);
 
-        builder.Property(x => x.Title)
+        builder.Property(book => book.Title)
             .HasMaxLength(300)
             .IsRequired();
 
-        builder.Property(x => x.Isbn)
+        builder.Property(book => book.Isbn)
             .HasMaxLength(20);
 
-        builder.Property(x => x.Description)
+        builder.Property(book => book.Description)
             .HasMaxLength(3000);
 
-        builder.Property(x => x.Language)
+        builder.Property(book => book.Language)
             .HasMaxLength(50)
             .IsRequired();
 
-        builder.HasIndex(x => x.Isbn)
-            .IsUnique()
-            .HasFilter("[Isbn] IS NOT NULL");
+        builder.Property(book => book.CreatedAt)
+            .HasDefaultValueSql("SYSUTCDATETIME()")
+            .IsRequired();
 
-        builder.HasOne(x => x.Publisher)
-            .WithMany(x => x.Books)
-            .HasForeignKey(x => x.PublisherId)
+        builder.Property(book => book.CreatedById)
+            .HasMaxLength(450);
+
+        builder.Property(book => book.UpdatedById)
+            .HasMaxLength(450);
+
+        builder.Property(book => book.DeletedById)
+            .HasMaxLength(450);
+
+        builder.Property(book => book.IsDeleted)
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.HasIndex(book => book.Isbn)
+            .IsUnique()
+            .HasFilter(
+                "[Isbn] IS NOT NULL AND [IsDeleted] = 0");
+
+        builder.HasQueryFilter(
+            book =>
+                !book.IsDeleted &&
+                !book.Publisher.IsDeleted);
+
+        builder.HasOne(book => book.Publisher)
+            .WithMany(publisher => publisher.Books)
+            .HasForeignKey(book => book.PublisherId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

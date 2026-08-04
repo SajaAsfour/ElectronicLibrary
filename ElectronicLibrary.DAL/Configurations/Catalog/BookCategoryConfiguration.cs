@@ -27,5 +27,10 @@ public class BookCategoryConfiguration
             .WithMany(x => x.BookCategories)
             .HasForeignKey(x => x.CategoryId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasQueryFilter(
+            bookCategory =>
+                !bookCategory.Book.IsDeleted &&
+                !bookCategory.Category.IsDeleted);
     }
 }

@@ -3,3 +3,5 @@ bin/
 obj/
 *.user
 *.suo
+ElectronicLibrary.PL/wwwroot/uploads/*
+!ElectronicLibrary.PL/wwwroot/uploads/.gitkeep
