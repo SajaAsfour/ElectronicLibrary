@@ -30,6 +30,8 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<ICategoryService, CategoryService>();
 
+        services.AddScoped<IBookService, BookService>();
+
         services.AddScoped<ITokenService, TokenService>();
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();

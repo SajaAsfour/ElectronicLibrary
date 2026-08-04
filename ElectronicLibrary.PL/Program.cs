@@ -17,6 +17,8 @@ builder.Services.AddAuthorizationPolicies();
 
 builder.Services.AddApplicationServices();
 
+builder.Services.AddFileStorageServices(builder.Configuration);
+
 builder.Services.AddEmailServices(builder.Configuration);
 
 builder.Services.AddLocalizationServices();
@@ -34,6 +36,8 @@ app.UseRequestLocalization(localizationOptions);
 app.UseGlobalExceptionHandling();
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

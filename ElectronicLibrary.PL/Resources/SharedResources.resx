@@ -204,4 +204,103 @@
 	<data name="CategoryDeletedSuccessfully" xml:space="preserve">
     <value>The category was deleted successfully.</value>
   </data>
+	<data name="BookNotFound" xml:space="preserve">
+    <value>Book was not found.</value>
+  </data>
+
+	<data name="BookIsbnAlreadyExists" xml:space="preserve">
+    <value>An active book with this ISBN already exists.</value>
+  </data>
+
+	<data name="InvalidIsbn" xml:space="preserve">
+    <value>ISBN must contain exactly 10 or 13 digits.</value>
+  </data>
+
+	<data name="InvalidPublicationYear" xml:space="preserve">
+    <value>Publication year cannot be greater than the current year.</value>
+  </data>
+
+	<data name="BookAuthorsRequired" xml:space="preserve">
+    <value>At least one author is required.</value>
+  </data>
+
+	<data name="BookCategoriesRequired" xml:space="preserve">
+    <value>At least one category is required.</value>
+  </data>
+
+	<data name="DuplicateAuthorIds" xml:space="preserve">
+    <value>Duplicate author IDs are not allowed.</value>
+  </data>
+
+	<data name="DuplicateCategoryIds" xml:space="preserve">
+    <value>Duplicate category IDs are not allowed.</value>
+  </data>
+
+	<data name="OneOrMoreAuthorsNotFound" xml:space="preserve">
+    <value>One or more selected authors were not found.</value>
+  </data>
+
+	<data name="OneOrMoreCategoriesNotFound" xml:space="preserve">
+    <value>One or more selected categories were not found.</value>
+  </data>
+
+	<data name="MultipleMainBookImages" xml:space="preserve">
+    <value>Only one image can be marked as the main book image.</value>
+  </data>
+
+	<data name="DuplicateBookImageUrls" xml:space="preserve">
+    <value>Duplicate book image URLs are not allowed.</value>
+  </data>
+
+	<data name="BookDeletedSuccessfully" xml:space="preserve">
+    <value>The book was deleted successfully.</value>
+  </data>
+	<data name="InvalidBookImageUrl" xml:space="preserve">
+    <value>Book image URL cannot be empty.</value>
+  </data>
+	<data name="BookTitleRequired" xml:space="preserve">
+    <value>Book title is required.</value>
+  </data>
+
+	<data name="BookLanguageRequired" xml:space="preserve">
+    <value>Book language is required.</value>
+  </data>
+	<data name="BookImageFileRequired" xml:space="preserve">
+    <value>An image file is required.</value>
+  </data>
+
+	<data name="BookImageFileTooLarge" xml:space="preserve">
+    <value>The image file exceeds the maximum allowed size.</value>
+  </data>
+
+	<data name="BookImageFileTypeNotAllowed" xml:space="preserve">
+    <value>The selected image file type is not allowed.</value>
+  </data>
+
+	<data name="BookImageNotFound" xml:space="preserve">
+    <value>The book image was not found.</value>
+  </data>
+
+	<data name="BookImageUploadedSuccessfully" xml:space="preserve">
+    <value>The book image was uploaded successfully.</value>
+  </data>
+
+	<data name="BookImageDeletedSuccessfully" xml:space="preserve">
+    <value>The book image was deleted successfully.</value>
+  </data>
+	<data name="InvalidBookImagePath" xml:space="preserve">
+    <value>The stored book image path is invalid.</value>
+  </data>
+	<data name="BookImagesRequired" xml:space="preserve">
+    <value>At least one book image is required.</value>
+  </data>
+
+	<data name="InvalidMainImageIndex" xml:space="preserve">
+    <value>The selected main image index is invalid.</value>
+  </data>
+
+	<data name="MaximumBookImagesExceeded" xml:space="preserve">
+    <value>A book cannot have more than ten images.</value>
+  </data>
+	
 </root>
