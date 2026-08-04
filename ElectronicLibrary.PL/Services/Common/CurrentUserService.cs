@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace ElectronicLibrary.BLL.Services.Common;
+namespace ElectronicLibrary.PL.Services.Common;
 
 public class CurrentUserService : ICurrentUserService
 {

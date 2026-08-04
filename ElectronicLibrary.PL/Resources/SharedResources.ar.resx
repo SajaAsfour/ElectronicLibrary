@@ -321,5 +321,40 @@
 	<data name="MaximumBookImagesExceeded" xml:space="preserve">
     <value>لا يمكن أن يحتوي الكتاب على أكثر من عشر صور.</value>
   </data>
+	<data name="SellerProfileAlreadyActivated" xml:space="preserve">
+  <value>تم تفعيل ملف البائع لهذا الحساب مسبقًا.</value>
+</data>
+
+	<data name="StoreNameAlreadyExists" xml:space="preserve">
+  <value>اسم المتجر مستخدم من بائع آخر.</value>
+</data>
+
+	<data name="StoreNameRequired" xml:space="preserve">
+  <value>اسم المتجر مطلوب.</value>
+</data>
+
+	<data name="StoreNameTooLong" xml:space="preserve">
+  <value>يجب ألا يتجاوز اسم المتجر 150 حرفًا.</value>
+</data>
+
+	<data name="SellerBioTooLong" xml:space="preserve">
+  <value>يجب ألا تتجاوز نبذة البائع 1000 حرف.</value>
+</data>
+
+	<data name="CityTooLong" xml:space="preserve">
+  <value>يجب ألا يتجاوز اسم المدينة 100 حرف.</value>
+</data>
+
+	<data name="AddressTooLong" xml:space="preserve">
+  <value>يجب ألا يتجاوز العنوان 500 حرف.</value>
+</data>
+
+	<data name="SellerNotFound" xml:space="preserve">
+  <value>ملف البائع غير موجود.</value>
+</data>
+
+	<data name="SellerRoleRequired" xml:space="preserve">
+  <value>يجب تفعيل ملف البائع أولًا للوصول إلى هذه الميزة.</value>
+</data>
 	
 </root>

@@ -27,25 +27,6 @@ public sealed class AccountAuthorizationTests
     }
 
     [Fact]
-    public async Task UpdateSellerProfile_WithoutToken_ReturnsUnauthorized()
-    {
-        var request = new
-        {
-            storeName = "Test Store",
-            bio = "Integration test store"
-        };
-
-        HttpResponseMessage response =
-            await _client.PutAsJsonAsync(
-                "/api/account/seller-profile",
-                request);
-
-        Assert.Equal(
-            HttpStatusCode.Unauthorized,
-            response.StatusCode);
-    }
-
-    [Fact]
     public async Task Login_WithInvalidCredentials_ReturnsUnauthorized()
     {
         var request = new

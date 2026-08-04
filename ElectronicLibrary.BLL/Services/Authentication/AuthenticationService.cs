@@ -386,26 +386,6 @@ public class AuthenticationService : IAuthenticationService
         await UpdateUserAsync(user);
     }
 
-    public async Task UpdateSellerProfileAsync(
-        string userId,
-        UpdateSellerProfileRequest request)
-    {
-        var user = await GetActiveUserAsync(userId);
-
-        if (!await _userManager.IsInRoleAsync(
-                user,
-                ApplicationRoles.Seller))
-        {
-            throw new UnauthorizedAccessException(
-                "SellerRoleRequired");
-        }
-
-        user.StoreName = request.StoreName.Trim();
-        user.SellerBio = NormalizeOptionalValue(request.Bio);
-
-        await UpdateUserAsync(user);
-    }
-
     public async Task UpdateAddressAsync(
         string userId,
         UpdateAddressRequest request)
