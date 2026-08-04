@@ -10,6 +10,7 @@ using ElectronicLibrary.DAL.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using ElectronicLibrary.BLL.Interfaces.Storage;
 using ElectronicLibrary.BLL.Models.Storage;
+using ElectronicLibrary.DAL.DTOs.Responses.Common;
 
 namespace ElectronicLibrary.BLL.Services.Catalog;
 
@@ -29,19 +30,302 @@ public class BookService : IBookService
         _fileStorageService = fileStorageService;
     }
 
-    public async Task<IReadOnlyCollection<BookResponse>>
-        GetBooksAsync(
-            CancellationToken cancellationToken = default)
+    public async Task<PagedResponse<BookResponse>>
+    GetBooksAsync(
+        BookFilterRequest request,
+        CancellationToken cancellationToken = default)
     {
-        List<BookResponse> books = await _unitOfWork
-            .Repository<Book>()
-            .Query()
-            .AsNoTracking()
-            .AsSplitQuery()
-            .OrderBy(book => book.Title)
-            .ThenBy(book => book.BookId)
-            .Select(book => new BookResponse
+        ArgumentNullException.ThrowIfNull(request);
+
+        int pageNumber =
+            request.PageNumber;
+
+        int pageSize =
+            request.PageSize;
+
+        IQueryable<Book> query = _unitOfWork
+    .Repository<Book>()
+    .Query()
+    .AsNoTracking();
+
+        string? searchTerm =
+    string.IsNullOrWhiteSpace(request.SearchTerm)
+        ? null
+        : request.SearchTerm
+            .Trim()
+            .ToLower();
+
+        if (searchTerm is not null)
+        {
+            query = query.Where(book =>
+                book.Title
+                    .ToLower()
+                    .Contains(searchTerm) ||
+
+                (book.Isbn != null &&
+                 book.Isbn
+                     .ToLower()
+                     .Contains(searchTerm)) ||
+
+                book.Publisher.Name
+                    .ToLower()
+                    .Contains(searchTerm) ||
+
+                book.BookAuthors.Any(bookAuthor =>
+                    bookAuthor.Author.Name
+                        .ToLower()
+                        .Contains(searchTerm)) ||
+
+                book.BookCategories.Any(bookCategory =>
+                    bookCategory.Category.Name
+                        .ToLower()
+                        .Contains(searchTerm)));
+        }
+
+        if (request.PublisherId.HasValue)
+        {
+            query = query.Where(book =>
+                book.PublisherId ==
+                request.PublisherId.Value);
+        }
+
+        if (request.AuthorId.HasValue)
+        {
+            query = query.Where(book =>
+                book.BookAuthors.Any(bookAuthor =>
+                    bookAuthor.AuthorId ==
+                    request.AuthorId.Value));
+        }
+
+        if (request.CategoryId.HasValue)
+        {
+            query = query.Where(book =>
+                book.BookCategories.Any(bookCategory =>
+                    bookCategory.CategoryId ==
+                    request.CategoryId.Value));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Language))
+        {
+            string language =
+                request.Language.Trim();
+
+            query = query.Where(book =>
+                book.Language == language);
+        }
+
+        if (request.PublicationYear.HasValue)
+        {
+            query = query.Where(book =>
+                book.PublicationYear ==
+                request.PublicationYear.Value);
+        }
+
+        if (request.Format.HasValue)
+        {
+            query = query.Where(book =>
+                book.Listings.Any(listing =>
+                    listing.Status ==
+                        ListingStatus.Active &&
+                    listing.Format ==
+                        request.Format.Value));
+        }
+
+        if (request.Condition.HasValue)
+        {
+            query = query.Where(book =>
+                book.Listings.Any(listing =>
+                    listing.Status ==
+                        ListingStatus.Active &&
+                    listing.Condition ==
+                        request.Condition.Value));
+        }
+
+        if (request.MinPrice.HasValue)
+        {
+            decimal minPrice =
+                request.MinPrice.Value;
+
+            query = query.Where(book =>
+                book.Listings.Any(listing =>
+                    listing.Status ==
+                        ListingStatus.Active &&
+                    listing.Quantity > 0 &&
+                    listing.Price -
+                        listing.Price *
+                        listing.DiscountPercentage /
+                        100m >= minPrice));
+        }
+
+        if (request.MaxPrice.HasValue)
+        {
+            decimal maxPrice =
+                request.MaxPrice.Value;
+
+            query = query.Where(book =>
+                book.Listings.Any(listing =>
+                    listing.Status ==
+                        ListingStatus.Active &&
+                    listing.Quantity > 0 &&
+                    listing.Price -
+                        listing.Price *
+                        listing.DiscountPercentage /
+                        100m <= maxPrice));
+        }
+
+        if (request.InStock.HasValue)
+        {
+            if (request.InStock.Value)
             {
+                query = query.Where(book =>
+                    book.Listings.Any(listing =>
+                        listing.Status ==
+                            ListingStatus.Active &&
+                        listing.Quantity > 0));
+            }
+            else
+            {
+                query = query.Where(book =>
+                    !book.Listings.Any(listing =>
+                        listing.Status ==
+                            ListingStatus.Active &&
+                        listing.Quantity > 0));
+            }
+        }
+
+        int totalCount =
+            await query.CountAsync(
+                cancellationToken);
+
+        string sortBy =
+    string.IsNullOrWhiteSpace(request.SortBy)
+        ? "title"
+        : request.SortBy
+            .Trim()
+            .ToLowerInvariant();
+
+        bool sortDescending =
+            string.Equals(
+                request.SortDirection?.Trim(),
+                "desc",
+                StringComparison.OrdinalIgnoreCase);
+
+        IOrderedQueryable<Book> orderedQuery;
+
+        switch (sortBy)
+        {
+            case "publicationyear":
+            case "year":
+                orderedQuery = sortDescending
+                    ? query
+                        .OrderBy(book =>
+                            book.PublicationYear == null)
+                        .ThenByDescending(book =>
+                            book.PublicationYear)
+                        .ThenBy(book =>
+                            book.BookId)
+                    : query
+                        .OrderBy(book =>
+                            book.PublicationYear == null)
+                        .ThenBy(book =>
+                            book.PublicationYear)
+                        .ThenBy(book =>
+                            book.BookId);
+
+                break;
+
+            case "price":
+            case "lowestprice":
+                orderedQuery = sortDescending
+                    ? query
+                        .OrderBy(book =>
+                            !book.Listings.Any(listing =>
+                                listing.Status ==
+                                    ListingStatus.Active &&
+                                listing.Quantity > 0))
+                        .ThenByDescending(book =>
+                            book.Listings
+                                .Where(listing =>
+                                    listing.Status ==
+                                        ListingStatus.Active &&
+                                    listing.Quantity > 0)
+                                .Select(listing =>
+                                    (decimal?)(
+                                        listing.Price -
+                                        listing.Price *
+                                        listing.DiscountPercentage /
+                                        100m))
+                                .Min())
+                        .ThenBy(book =>
+                            book.BookId)
+                    : query
+                        .OrderBy(book =>
+                            !book.Listings.Any(listing =>
+                                listing.Status ==
+                                    ListingStatus.Active &&
+                                listing.Quantity > 0))
+                        .ThenBy(book =>
+                            book.Listings
+                                .Where(listing =>
+                                    listing.Status ==
+                                        ListingStatus.Active &&
+                                    listing.Quantity > 0)
+                                .Select(listing =>
+                                    (decimal?)(
+                                        listing.Price -
+                                        listing.Price *
+                                        listing.DiscountPercentage /
+                                        100m))
+                                .Min())
+                        .ThenBy(book =>
+                            book.BookId);
+
+                break;
+
+            case "availablelistingscount":
+            case "listingscount":
+                orderedQuery = sortDescending
+                    ? query
+                        .OrderByDescending(book =>
+                            book.Listings.Count(listing =>
+                                listing.Status ==
+                                    ListingStatus.Active &&
+                                listing.Quantity > 0))
+                        .ThenBy(book =>
+                            book.BookId)
+                    : query
+                        .OrderBy(book =>
+                            book.Listings.Count(listing =>
+                                listing.Status ==
+                                    ListingStatus.Active &&
+                                listing.Quantity > 0))
+                        .ThenBy(book =>
+                            book.BookId);
+
+                break;
+
+            case "title":
+            default:
+                orderedQuery = sortDescending
+                    ? query
+                        .OrderByDescending(book =>
+                            book.Title)
+                        .ThenBy(book =>
+                            book.BookId)
+                    : query
+                        .OrderBy(book =>
+                            book.Title)
+                        .ThenBy(book =>
+                            book.BookId);
+
+                break;
+        }
+
+        List<BookResponse> books = await orderedQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(book => new BookResponse
+        {
                 BookId = book.BookId,
                 Title = book.Title,
                 Isbn = book.Isbn,
@@ -68,15 +352,40 @@ public class BookService : IBookService
                     .Select(image => image.ImageUrl)
                     .FirstOrDefault(),
 
-                AvailableListingsCount = book.Listings.Count(
-                    listing =>
+                LowestAvailablePrice = book.Listings
+                    .Where(listing =>
                         listing.Status ==
                             ListingStatus.Active &&
                         listing.Quantity > 0)
+                    .Select(listing =>
+                        (decimal?)(
+                            listing.Price -
+                            listing.Price *
+                            listing.DiscountPercentage /
+                            100m))
+                    .Min(),
+
+                AvailableListingsCount =
+                    book.Listings.Count(
+                        listing =>
+                            listing.Status ==
+                                ListingStatus.Active &&
+                            listing.Quantity > 0)
             })
             .ToListAsync(cancellationToken);
 
-        return books;
+        return new PagedResponse<BookResponse>
+        {
+            Items = books,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalCount == 0
+                ? 0
+                : (int)Math.Ceiling(
+                    totalCount /
+                    (double)pageSize)
+        };
     }
 
     public async Task<BookDetailsResponse>

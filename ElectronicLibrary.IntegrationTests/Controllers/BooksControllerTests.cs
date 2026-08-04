@@ -3,6 +3,7 @@ using ElectronicLibrary.DAL.Data;
 using ElectronicLibrary.DAL.DTOs.Requests.Books;
 using ElectronicLibrary.DAL.DTOs.Responses.Books;
 using ElectronicLibrary.DAL.Models.Catalog;
+using ElectronicLibrary.DAL.DTOs.Responses.Common;
 using ElectronicLibrary.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -42,12 +43,14 @@ public sealed class BooksControllerTests
             response,
             HttpStatusCode.OK);
 
-        List<BookResponse>? result =
-            await response.Content
-                .ReadFromJsonAsync<List<BookResponse>>();
+        PagedResponse<BookResponse>? result =
+        await response.Content
+            .ReadFromJsonAsync<
+                PagedResponse<BookResponse>>();
 
         Assert.NotNull(result);
-        Assert.Empty(result);
+        Assert.NotNull(result.Items);
+
     }
 
     [Fact]
@@ -1033,12 +1036,13 @@ public sealed class BooksControllerTests
             getBooksResponse,
             HttpStatusCode.OK);
 
-        List<BookResponse>? activeBooks =
-            await getBooksResponse.Content
-                .ReadFromJsonAsync<List<BookResponse>>();
+        PagedResponse<BookResponse>? result =
+    await getBooksResponse.Content
+        .ReadFromJsonAsync<
+            PagedResponse<BookResponse>>();
 
-        Assert.NotNull(activeBooks);
-        Assert.Empty(activeBooks);
+        Assert.NotNull(result);
+        Assert.NotNull(result.Items);;
 
         using IServiceScope scope =
             _factory.Services.CreateScope();
@@ -1080,6 +1084,195 @@ public sealed class BooksControllerTests
         Assert.Single(
             deletedBook.BookImages);
     }
+
+    [Fact]
+    public async Task GetBooks_WithSearchAndPagination_ReturnsPagedResponse()
+    {
+        await ClearBookCatalogAsync();
+
+        var catalog =
+            await SeedCatalogAsync();
+
+        await AuthenticateAsAdminAsync();
+
+        CreateBookRequest alphaRequest =
+            CreateRequest(
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId);
+
+        alphaRequest.Title =
+            "Alpha Book";
+
+        alphaRequest.Isbn =
+            "9780131101784";
+
+        using MultipartFormDataContent alphaContent =
+            CreateBookMultipartContent(
+                alphaRequest,
+                imageCount: 1,
+                mainImageIndex: 0,
+                fileNamePrefix: "alpha-search");
+
+        HttpResponseMessage alphaResponse =
+            await _client.PostAsync(
+                "/api/books",
+                alphaContent);
+
+        await AssertStatusCodeAsync(
+            alphaResponse,
+            HttpStatusCode.Created);
+
+        CreateBookRequest betaRequest =
+            CreateRequest(
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId);
+
+        betaRequest.Title =
+            "Beta Book";
+
+        betaRequest.Isbn =
+            "9780131101791";
+
+        using MultipartFormDataContent betaContent =
+            CreateBookMultipartContent(
+                betaRequest,
+                imageCount: 1,
+                mainImageIndex: 0,
+                fileNamePrefix: "beta-search");
+
+        HttpResponseMessage betaResponse =
+            await _client.PostAsync(
+                "/api/books",
+                betaContent);
+
+        await AssertStatusCodeAsync(
+            betaResponse,
+            HttpStatusCode.Created);
+
+        CreateBookRequest gammaRequest =
+            CreateRequest(
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId);
+
+        gammaRequest.Title =
+            "Gamma Book";
+
+        gammaRequest.Isbn =
+            "9780131101807";
+
+        using MultipartFormDataContent gammaContent =
+            CreateBookMultipartContent(
+                gammaRequest,
+                imageCount: 1,
+                mainImageIndex: 0,
+                fileNamePrefix: "gamma-search");
+
+        HttpResponseMessage gammaResponse =
+            await _client.PostAsync(
+                "/api/books",
+                gammaContent);
+
+        await AssertStatusCodeAsync(
+            gammaResponse,
+            HttpStatusCode.Created);
+
+        IntegrationTestAuthenticationHelper
+            .ClearBearerToken(_client);
+
+        HttpResponseMessage response =
+            await _client.GetAsync(
+                "/api/books" +
+                "?searchTerm=book" +
+                "&sortBy=title" +
+                "&sortDirection=asc" +
+                "&pageNumber=2" +
+                "&pageSize=2");
+
+        await AssertStatusCodeAsync(
+            response,
+            HttpStatusCode.OK);
+
+        PagedResponse<BookResponse>? result =
+            await response.Content
+                .ReadFromJsonAsync<
+                    PagedResponse<BookResponse>>();
+
+        Assert.NotNull(result);
+
+        BookResponse book =
+            Assert.Single(result.Items);
+
+        Assert.Equal(
+            "Gamma Book",
+            book.Title);
+
+        Assert.Equal(
+            2,
+            result.PageNumber);
+
+        Assert.Equal(
+            2,
+            result.PageSize);
+
+        Assert.Equal(
+            3,
+            result.TotalCount);
+
+        Assert.Equal(
+            2,
+            result.TotalPages);
+
+        Assert.True(
+            result.HasPreviousPage);
+
+        Assert.False(
+            result.HasNextPage);
+
+        Assert.NotNull(
+            book.MainImageUrl);
+
+        Assert.True(
+            Uri.TryCreate(
+                book.MainImageUrl,
+                UriKind.Absolute,
+                out Uri? imageUri));
+
+        Assert.NotNull(imageUri);
+
+        Assert.Equal(
+            _client.BaseAddress!.Host,
+            imageUri.Host);
+    }
+    [Theory]
+    [InlineData("pageNumber=0")]
+    [InlineData("pageSize=51")]
+    [InlineData("minPrice=-1")]
+    [InlineData("maxPrice=-1")]
+    [InlineData("minPrice=100&maxPrice=10")]
+    [InlineData("sortBy=invalid")]
+    [InlineData("sortDirection=random")]
+    [InlineData("format=999")]
+    [InlineData("condition=999")]
+    public async Task GetBooks_WithInvalidQuery_ReturnsBadRequest(
+    string queryString)
+    {
+        await ClearBookCatalogAsync();
+
+        IntegrationTestAuthenticationHelper
+            .ClearBearerToken(_client);
+
+        HttpResponseMessage response =
+            await _client.GetAsync(
+                $"/api/books?{queryString}");
+
+        await AssertStatusCodeAsync(
+            response,
+            HttpStatusCode.BadRequest);
+    }
+
 
     private async Task AuthenticateAsAdminAsync()
     {

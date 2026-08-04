@@ -2,6 +2,10 @@
 using ElectronicLibrary.BLL.Models.Storage;
 using ElectronicLibrary.DAL.DTOs.Requests.Books;
 using ElectronicLibrary.DAL.DTOs.Responses.Books;
+using ElectronicLibrary.DAL.DTOs.Responses.Common;
+using ElectronicLibrary.DAL.Enums;
+using ElectronicLibrary.DAL.Models.Identity;
+using ElectronicLibrary.DAL.Models.Marketplace;
 using ElectronicLibrary.DAL.Models.Catalog;
 using ElectronicLibrary.UnitTests.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -82,10 +86,14 @@ public class BookServiceTests
             $"/uploads/books/{response.BookId}/",
             responseImage.ImageUrl);
 
-        Assert.True(
-            responseImage.ImageUrl.EndsWith(
-                ".jpg",
-                StringComparison.OrdinalIgnoreCase));
+        Assert.StartsWith(
+            $"/uploads/books/{response.BookId}/",
+            responseImage.ImageUrl);
+
+        Assert.EndsWith(
+             ".jpg",
+              responseImage.ImageUrl,
+              StringComparison.OrdinalIgnoreCase);
 
         Assert.True(responseImage.IsMain);
 
@@ -1206,14 +1214,14 @@ public class BookServiceTests
             response.Images.Count);
 
         BookImageResponse mainImage =
-            Assert.Single(
-                response.Images,
-                image => image.IsMain);
+        Assert.Single(
+            response.Images,
+            image => image.IsMain);
 
-        Assert.True(
-            mainImage.ImageUrl.EndsWith(
-                ".webp",
-                StringComparison.OrdinalIgnoreCase));
+        Assert.EndsWith(
+            ".webp",
+            mainImage.ImageUrl,
+            StringComparison.OrdinalIgnoreCase);
 
         Assert.Equal(
             3,
@@ -1520,7 +1528,7 @@ public class BookServiceTests
                 firstRequest,
                 [
                     testContext.CreateImageFile(
-                        "first-book.jpg")
+                    "first-book.jpg")
                 ],
                 mainImageIndex: 0);
 
@@ -1541,18 +1549,19 @@ public class BookServiceTests
                 secondRequest,
                 [
                     testContext.CreateImageFile(
-                        "second-book.jpg")
+                    "second-book.jpg")
                 ],
                 mainImageIndex: 0);
 
         await testContext.BookService.DeleteBookAsync(
             firstBook.BookId);
 
-        IReadOnlyCollection<BookResponse> books =
-            await testContext.BookService.GetBooksAsync();
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                new BookFilterRequest());
 
         BookResponse remainingBook =
-            Assert.Single(books);
+            Assert.Single(response.Items);
 
         Assert.Equal(
             secondBook.BookId,
@@ -1561,6 +1570,28 @@ public class BookServiceTests
         Assert.Equal(
             "Second Active Book",
             remainingBook.Title);
+
+        Assert.Equal(
+            1,
+            response.PageNumber);
+
+        Assert.Equal(
+            10,
+            response.PageSize);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+
+        Assert.Equal(
+            1,
+            response.TotalPages);
+
+        Assert.False(
+            response.HasPreviousPage);
+
+        Assert.False(
+            response.HasNextPage);
     }
 
     private static async Task<(
@@ -1668,6 +1699,166 @@ public class BookServiceTests
         };
     }
 
+    [Fact]
+    public async Task GetBooksAsync_WithTitleSearch_ReturnsMatchingBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        CreateBookRequest firstRequest =
+            CreateValidRequest(
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId);
+
+        firstRequest.Title = "Introduction to Programming";
+        firstRequest.Isbn = "9780131103627";
+
+        await testContext.BookService.CreateBookAsync(
+            firstRequest,
+            [
+                testContext.CreateImageFile(
+                "introduction-programming.jpg")
+            ],
+            mainImageIndex: 0);
+
+        CreateBookRequest secondRequest =
+            CreateValidRequest(
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId);
+
+        secondRequest.Title = "Advanced Database Systems";
+        secondRequest.Isbn = "9780201309980";
+
+        BookDetailsResponse expectedBook =
+            await testContext.BookService.CreateBookAsync(
+                secondRequest,
+                [
+                    testContext.CreateImageFile(
+                    "advanced-database.jpg")
+                ],
+                mainImageIndex: 0);
+
+        BookFilterRequest filter = new()
+        {
+            SearchTerm = "advanced"
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            expectedBook.BookId,
+            book.BookId);
+
+        Assert.Equal(
+            "Advanced Database Systems",
+            book.Title);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+
+        Assert.Equal(
+            1,
+            response.TotalPages);
+
+        Assert.Equal(
+            1,
+            response.PageNumber);
+
+        Assert.Equal(
+            10,
+            response.PageSize);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WithPagination_ReturnsRequestedPage()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Alpha Book",
+            "9780132350884",
+            "alpha-book.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Beta Book",
+            "9780201616224",
+            "beta-book.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Gamma Book",
+            "9780321125217",
+            "gamma-book.jpg");
+
+        BookFilterRequest filter = new()
+        {
+            SortBy = "title",
+            SortDirection = "asc",
+            PageNumber = 2,
+            PageSize = 2
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            "Gamma Book",
+            book.Title);
+
+        Assert.Equal(
+            2,
+            response.PageNumber);
+
+        Assert.Equal(
+            2,
+            response.PageSize);
+
+        Assert.Equal(
+            3,
+            response.TotalCount);
+
+        Assert.Equal(
+            2,
+            response.TotalPages);
+
+        Assert.True(
+            response.HasPreviousPage);
+
+        Assert.False(
+            response.HasNextPage);
+    }
+
+
     private static void BookAuthorResponseAssertions(
         BookDetailsResponse response,
         Author expectedAuthor)
@@ -1682,6 +1873,943 @@ public class BookServiceTests
         Assert.Equal(
             expectedAuthor.Name,
             responseAuthor.Name);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithCatalogFilters_ReturnsMatchingBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse expectedBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Catalog Filter Book",
+                "9780135957059",
+                "catalog-filter-book.jpg");
+
+        BookFilterRequest filter = new()
+        {
+            PublisherId =
+                catalog.Publisher.PublisherId,
+
+            AuthorId =
+                catalog.Author.AuthorId,
+
+            CategoryId =
+                catalog.Category.CategoryId
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            expectedBook.BookId,
+            book.BookId);
+
+        Assert.Equal(
+            "Catalog Filter Book",
+            book.Title);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithUnknownCategoryId_ReturnsEmptyPage()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Existing Category Book",
+            "9780134685991",
+            "existing-category-book.jpg");
+
+        BookFilterRequest filter = new()
+        {
+            CategoryId = int.MaxValue
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        Assert.Empty(
+            response.Items);
+
+        Assert.Equal(
+            0,
+            response.TotalCount);
+
+        Assert.Equal(
+            0,
+            response.TotalPages);
+
+        Assert.False(
+            response.HasPreviousPage);
+
+        Assert.False(
+            response.HasNextPage);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithLanguageFilter_ReturnsMatchingBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "English Programming Book",
+            "9780137903955",
+            "english-programming-book.jpg",
+            language: "English");
+
+        BookDetailsResponse expectedBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Arabic Programming Book",
+                "9780132350884",
+                "arabic-programming-book.jpg",
+                language: "Arabic");
+
+        BookFilterRequest filter = new()
+        {
+            Language = "Arabic"
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            expectedBook.BookId,
+            book.BookId);
+
+        Assert.Equal(
+            "Arabic",
+            book.Language);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithPublicationYearFilter_ReturnsMatchingBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Older Programming Book",
+            "9780201633610",
+            "older-programming-book.jpg",
+            publicationYear: 2018);
+
+        BookDetailsResponse expectedBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Modern Programming Book",
+                "9780321146533",
+                "modern-programming-book.jpg",
+                publicationYear: 2025);
+
+        BookFilterRequest filter = new()
+        {
+            PublicationYear = 2025
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            expectedBook.BookId,
+            book.BookId);
+
+        Assert.Equal(
+            2025,
+            book.PublicationYear);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+    }
+
+
+    [Fact]
+    public async Task GetBooksAsync_SortByTitleDescending_ReturnsCorrectOrder()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Alpha Book",
+            "9780137081073",
+            "alpha-sort.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Beta Book",
+            "9780134494166",
+            "beta-sort.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Gamma Book",
+            "9780596007126",
+            "gamma-sort.jpg");
+
+        BookFilterRequest filter = new()
+        {
+            SortBy = "title",
+            SortDirection = "desc",
+            PageNumber = 1,
+            PageSize = 10
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        string[] titles =
+            response.Items
+                .Select(book => book.Title)
+                .ToArray();
+
+        Assert.Equal(
+            [
+                "Gamma Book",
+            "Beta Book",
+            "Alpha Book"
+            ],
+            titles);
+
+        Assert.Equal(
+            3,
+            response.TotalCount);
+
+        Assert.Equal(
+            1,
+            response.TotalPages);
+
+        Assert.False(
+            response.HasPreviousPage);
+
+        Assert.False(
+            response.HasNextPage);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithListingFilters_ReturnsMatchingBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse expectedBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Discounted Physical Book",
+                "9780131101630",
+                "discounted-physical-book.jpg");
+
+        BookDetailsResponse otherBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Digital Book",
+                "9780131101647",
+                "digital-book.jpg");
+
+        ApplicationUser seller =
+            await SeedSellerAsync(
+                testContext);
+
+        await AddListingAsync(
+            testContext,
+            expectedBook.BookId,
+            seller,
+            price: 100m,
+            quantity: 4,
+            format: BookFormat.Physical,
+            condition: BookCondition.Good,
+            discountPercentage: 25m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            otherBook.BookId,
+            seller,
+            price: 40m,
+            quantity: 5,
+            format: BookFormat.Digital,
+            condition: null,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        BookFilterRequest filter = new()
+        {
+            Format = BookFormat.Physical,
+            Condition = BookCondition.Good,
+            MinPrice = 70m,
+            MaxPrice = 80m,
+            InStock = true
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            expectedBook.BookId,
+            book.BookId);
+
+        Assert.Equal(
+            75m,
+            book.LowestAvailablePrice);
+
+        Assert.Equal(
+            1,
+            book.AvailableListingsCount);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+    }
+    [Fact]
+    public async Task GetBooksAsync_WithInStockFalse_ReturnsUnavailableBook()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse availableBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Available Book",
+                "9780131101654",
+                "available-book.jpg");
+
+        BookDetailsResponse unavailableBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Unavailable Book",
+                "9780131101661",
+                "unavailable-book.jpg");
+
+        ApplicationUser seller =
+            await SeedSellerAsync(
+                testContext);
+
+        await AddListingAsync(
+            testContext,
+            availableBook.BookId,
+            seller,
+            price: 50m,
+            quantity: 3,
+            format: BookFormat.Physical,
+            condition: BookCondition.New,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            unavailableBook.BookId,
+            seller,
+            price: 30m,
+            quantity: 0,
+            format: BookFormat.Physical,
+            condition: BookCondition.Used,
+            discountPercentage: 0m,
+            status: ListingStatus.OutOfStock);
+
+        BookFilterRequest filter = new()
+        {
+            InStock = false
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            unavailableBook.BookId,
+            book.BookId);
+
+        Assert.Null(
+            book.LowestAvailablePrice);
+
+        Assert.Equal(
+            0,
+            book.AvailableListingsCount);
+
+        Assert.Equal(
+            1,
+            response.TotalCount);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_WithMultipleListings_ReturnsLowestDiscountedPrice()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse createdBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Multiple Listings Book",
+                "9780131101678",
+                "multiple-listings-book.jpg");
+
+        ApplicationUser seller =
+            await SeedSellerAsync(
+                testContext);
+
+        await AddListingAsync(
+            testContext,
+            createdBook.BookId,
+            seller,
+            price: 100m,
+            quantity: 2,
+            format: BookFormat.Physical,
+            condition: BookCondition.New,
+            discountPercentage: 10m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            createdBook.BookId,
+            seller,
+            price: 80m,
+            quantity: 5,
+            format: BookFormat.Physical,
+            condition: BookCondition.Good,
+            discountPercentage: 25m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            createdBook.BookId,
+            seller,
+            price: 20m,
+            quantity: 0,
+            format: BookFormat.Digital,
+            condition: null,
+            discountPercentage: 0m,
+            status: ListingStatus.OutOfStock);
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                new BookFilterRequest());
+
+        BookResponse book =
+            Assert.Single(response.Items);
+
+        Assert.Equal(
+            60m,
+            book.LowestAvailablePrice);
+
+        Assert.Equal(
+            2,
+            book.AvailableListingsCount);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_SortByPublicationYearDescending_ReturnsNewestFirst()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Older Book",
+            "9780131101685",
+            "older-sort-book.jpg",
+            publicationYear: 2015);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Newest Book",
+            "9780131101692",
+            "newest-sort-book.jpg",
+            publicationYear: 2025);
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Middle Book",
+            "9780131101708",
+            "middle-sort-book.jpg",
+            publicationYear: 2020);
+
+        BookFilterRequest filter = new()
+        {
+            SortBy = "publicationYear",
+            SortDirection = "desc"
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        string[] titles =
+            response.Items
+                .Select(book => book.Title)
+                .ToArray();
+
+        Assert.Equal(
+            [
+                "Newest Book",
+            "Middle Book",
+            "Older Book"
+            ],
+            titles);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_SortByPriceAscending_ReturnsCheapestFirst()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse expensiveBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Expensive Book",
+                "9780131101715",
+                "expensive-book.jpg");
+
+        BookDetailsResponse cheapestBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Cheapest Book",
+                "9780131101722",
+                "cheapest-book.jpg");
+
+        BookDetailsResponse mediumBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Medium Price Book",
+                "9780131101739",
+                "medium-price-book.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "Book Without Listing",
+            "9780131101746",
+            "book-without-listing.jpg");
+
+        ApplicationUser seller =
+            await SeedSellerAsync(
+                testContext);
+
+        await AddListingAsync(
+            testContext,
+            expensiveBook.BookId,
+            seller,
+            price: 100m,
+            quantity: 2,
+            format: BookFormat.Physical,
+            condition: BookCondition.New,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            cheapestBook.BookId,
+            seller,
+            price: 50m,
+            quantity: 3,
+            format: BookFormat.Physical,
+            condition: BookCondition.Good,
+            discountPercentage: 20m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            mediumBook.BookId,
+            seller,
+            price: 60m,
+            quantity: 4,
+            format: BookFormat.Digital,
+            condition: null,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        BookFilterRequest filter = new()
+        {
+            SortBy = "price",
+            SortDirection = "asc"
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse[] books =
+            response.Items.ToArray();
+
+        Assert.Equal(
+            "Cheapest Book",
+            books[0].Title);
+
+        Assert.Equal(
+            40m,
+            books[0].LowestAvailablePrice);
+
+        Assert.Equal(
+            "Medium Price Book",
+            books[1].Title);
+
+        Assert.Equal(
+            60m,
+            books[1].LowestAvailablePrice);
+
+        Assert.Equal(
+            "Expensive Book",
+            books[2].Title);
+
+        Assert.Equal(
+            100m,
+            books[2].LowestAvailablePrice);
+
+        Assert.Equal(
+            "Book Without Listing",
+            books[3].Title);
+
+        Assert.Null(
+            books[3].LowestAvailablePrice);
+    }
+
+    [Fact]
+    public async Task GetBooksAsync_SortByAvailableListingsCountDescending_ReturnsHighestFirst()
+    {
+        await using var testContext =
+            new BookServiceTestContext();
+
+        var catalog =
+            await SeedCatalogAsync(testContext);
+
+        BookDetailsResponse mostListingsBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "Most Listings Book",
+                "9780131101753",
+                "most-listings-book.jpg");
+
+        BookDetailsResponse oneListingBook =
+            await CreateBookForSearchAsync(
+                testContext,
+                catalog.Publisher.PublisherId,
+                catalog.Author.AuthorId,
+                catalog.Category.CategoryId,
+                "One Listing Book",
+                "9780131101760",
+                "one-listing-book.jpg");
+
+        await CreateBookForSearchAsync(
+            testContext,
+            catalog.Publisher.PublisherId,
+            catalog.Author.AuthorId,
+            catalog.Category.CategoryId,
+            "No Listings Book",
+            "9780131101777",
+            "no-listings-book.jpg");
+
+        ApplicationUser seller =
+            await SeedSellerAsync(
+                testContext);
+
+        await AddListingAsync(
+            testContext,
+            mostListingsBook.BookId,
+            seller,
+            price: 60m,
+            quantity: 3,
+            format: BookFormat.Physical,
+            condition: BookCondition.New,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            mostListingsBook.BookId,
+            seller,
+            price: 50m,
+            quantity: 2,
+            format: BookFormat.Digital,
+            condition: null,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        await AddListingAsync(
+            testContext,
+            oneListingBook.BookId,
+            seller,
+            price: 40m,
+            quantity: 5,
+            format: BookFormat.Physical,
+            condition: BookCondition.Good,
+            discountPercentage: 0m,
+            status: ListingStatus.Active);
+
+        BookFilterRequest filter = new()
+        {
+            SortBy = "availableListingsCount",
+            SortDirection = "desc"
+        };
+
+        PagedResponse<BookResponse> response =
+            await testContext.BookService.GetBooksAsync(
+                filter);
+
+        BookResponse[] books =
+            response.Items.ToArray();
+
+        Assert.Equal(
+            "Most Listings Book",
+            books[0].Title);
+
+        Assert.Equal(
+            2,
+            books[0].AvailableListingsCount);
+
+        Assert.Equal(
+            "One Listing Book",
+            books[1].Title);
+
+        Assert.Equal(
+            1,
+            books[1].AvailableListingsCount);
+
+        Assert.Equal(
+            "No Listings Book",
+            books[2].Title);
+
+        Assert.Equal(
+            0,
+            books[2].AvailableListingsCount);
+    }
+
+
+
+    private static async Task<ApplicationUser>
+    SeedSellerAsync(
+        BookServiceTestContext testContext)
+    {
+        ApplicationUser seller = new()
+        {
+            Id = $"unit-test-seller-{Guid.NewGuid()}",
+            UserName =
+                $"seller-{Guid.NewGuid()}@example.com",
+            NormalizedUserName =
+                $"SELLER-{Guid.NewGuid()}@EXAMPLE.COM",
+            Email =
+                $"seller-{Guid.NewGuid()}@example.com",
+            NormalizedEmail =
+                $"SELLER-{Guid.NewGuid()}@EXAMPLE.COM",
+            FullName = "Unit Test Seller",
+            StoreName = "Unit Test Book Store",
+            EmailConfirmed = true
+        };
+
+        testContext.DbContext.Users.Add(
+            seller);
+
+        await testContext.DbContext.SaveChangesAsync();
+
+        return seller;
+    }
+
+
+    private static async Task<Listing>
+    AddListingAsync(
+        BookServiceTestContext testContext,
+        int bookId,
+        ApplicationUser seller,
+        decimal price,
+        int quantity,
+        BookFormat format,
+        BookCondition? condition,
+        decimal discountPercentage,
+        ListingStatus status)
+    {
+        Book book =
+            await testContext.DbContext.Books
+                .SingleAsync(
+                    book =>
+                        book.BookId == bookId);
+
+        Listing listing = new()
+        {
+            BookId = book.BookId,
+            Book = book,
+            SellerId = seller.Id,
+            Seller = seller,
+            Price = price,
+            Quantity = quantity,
+            Format = format,
+            Condition = condition,
+            DiscountPercentage =
+                discountPercentage,
+            Status = status
+        };
+
+        testContext.DbContext.Listings.Add(
+            listing);
+
+        await testContext.DbContext.SaveChangesAsync();
+
+        return listing;
+    }
+
+    private static async Task<BookDetailsResponse>
+    CreateBookForSearchAsync(
+        BookServiceTestContext testContext,
+        int publisherId,
+        int authorId,
+        int categoryId,
+        string title,
+        string isbn,
+        string imageFileName,
+        string language = "English",
+        int? publicationYear = 2020)
+    {
+        CreateBookRequest request =
+            CreateValidRequest(
+                publisherId,
+                authorId,
+                categoryId);
+
+        request.Title =
+            title;
+
+        request.Isbn =
+            isbn;
+
+        request.Language =
+            language;
+
+        request.PublicationYear =
+            publicationYear;
+
+        return await testContext.BookService.CreateBookAsync(
+            request,
+            [
+                testContext.CreateImageFile(
+                imageFileName)
+            ],
+            mainImageIndex: 0);
     }
 
     private static void BookCategoryResponseAssertions(

@@ -22,5 +22,7 @@ public class BookResponse
 
     public string? MainImageUrl { get; set; }
 
+    public decimal? LowestAvailablePrice { get; set; }
+
     public int AvailableListingsCount { get; set; }
 }
