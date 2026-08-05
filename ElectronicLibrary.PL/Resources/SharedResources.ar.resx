@@ -356,5 +356,22 @@
 	<data name="SellerRoleRequired" xml:space="preserve">
   <value>يجب تفعيل ملف البائع أولًا للوصول إلى هذه الميزة.</value>
 </data>
-	
+	<data name="ListingOwnershipRequired" xml:space="preserve">
+  <value>لا تملك صلاحية إدارة هذا الإعلان.</value>
+</data>
+	<data name="InvalidBookFormat" xml:space="preserve">
+  <value>صيغة الكتاب غير صالحة.</value>
+</data>
+
+	<data name="InvalidBookCondition" xml:space="preserve">
+  <value>حالة الكتاب غير صالحة.</value>
+</data>
+
+	<data name="PageNumberMustBeGreaterThanZero" xml:space="preserve">
+  <value>يجب أن يكون رقم الصفحة أكبر من صفر.</value>
+</data>
+
+	<data name="PageSizeOutOfRange" xml:space="preserve">
+  <value>يجب أن يكون حجم الصفحة بين 1 و50.</value>
+</data>
 </root>

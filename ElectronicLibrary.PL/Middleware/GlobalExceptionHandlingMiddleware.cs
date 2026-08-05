@@ -39,6 +39,18 @@ public class GlobalExceptionHandlingMiddleware
                 HttpStatusCode.Unauthorized,
                 GetLocalizedMessage(exception.Message));
         }
+
+        catch (ForbiddenException exception)
+        {
+            _logger.LogWarning(
+                exception,
+                "Forbidden request.");
+
+            await WriteErrorResponseAsync(
+                context,
+                HttpStatusCode.Forbidden,
+                GetLocalizedMessage(exception.Message));
+        }
         catch (ConflictException exception)
         {
             _logger.LogWarning(

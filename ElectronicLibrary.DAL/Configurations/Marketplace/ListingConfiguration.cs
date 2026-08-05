@@ -12,29 +12,63 @@ public class ListingConfiguration
     {
         builder.ToTable("Listings");
 
-        builder.HasKey(x => x.ListingId);
+        builder.HasKey(listing =>
+            listing.ListingId);
 
-        builder.Property(x => x.Price)
+        builder.Property(listing =>
+                listing.Price)
             .HasPrecision(18, 2);
 
-        builder.Property(x => x.DiscountPercentage)
+        builder.Property(listing =>
+                listing.DiscountPercentage)
             .HasPrecision(5, 2);
 
-        builder.Property(x => x.SellerId)
+        builder.Property(listing =>
+                listing.SellerId)
+            .HasMaxLength(450)
             .IsRequired();
 
-        builder.HasOne(x => x.Book)
-            .WithMany(x => x.Listings)
-            .HasForeignKey(x => x.BookId)
+        builder.Property(listing =>
+                listing.CreatedAt)
+            .HasDefaultValueSql(
+                "SYSUTCDATETIME()")
+            .IsRequired();
+
+        builder.Property(listing =>
+                listing.CreatedById)
+            .HasMaxLength(450);
+
+        builder.Property(listing =>
+                listing.UpdatedById)
+            .HasMaxLength(450);
+
+        builder.Property(listing =>
+                listing.DeletedById)
+            .HasMaxLength(450);
+
+        builder.Property(listing =>
+                listing.IsDeleted)
+            .HasDefaultValue(false)
+            .IsRequired();
+
+        builder.HasOne(listing =>
+                listing.Book)
+            .WithMany(book =>
+                book.Listings)
+            .HasForeignKey(listing =>
+                listing.BookId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.Seller)
-            .WithMany(x => x.Listings)
-            .HasForeignKey(x => x.SellerId)
+        builder.HasOne(listing =>
+                listing.Seller)
+            .WithMany(seller =>
+                seller.Listings)
+            .HasForeignKey(listing =>
+                listing.SellerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasQueryFilter(
-            listing =>
-                !listing.Book.IsDeleted);
+        builder.HasQueryFilter(listing =>
+            !listing.IsDeleted &&
+            !listing.Book.IsDeleted);
     }
 }

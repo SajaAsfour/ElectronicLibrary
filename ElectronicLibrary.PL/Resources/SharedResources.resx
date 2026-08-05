@@ -338,4 +338,22 @@
 <data name="SellerRoleRequired" xml:space="preserve">
   <value>Activate your seller profile before accessing this feature.</value>
 </data>
+	<data name="ListingOwnershipRequired" xml:space="preserve">
+  <value>You are not allowed to manage this listing.</value>
+</data>
+	<data name="InvalidBookFormat" xml:space="preserve">
+  <value>The book format is invalid.</value>
+</data>
+
+	<data name="InvalidBookCondition" xml:space="preserve">
+  <value>The book condition is invalid.</value>
+</data>
+
+	<data name="PageNumberMustBeGreaterThanZero" xml:space="preserve">
+  <value>Page number must be greater than zero.</value>
+</data>
+
+	<data name="PageSizeOutOfRange" xml:space="preserve">
+  <value>Page size must be between 1 and 50.</value>
+</data>
 </root>

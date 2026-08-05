@@ -24,9 +24,24 @@ public class Listing
 
     public int BookId { get; set; }
 
-    public Book Book { get; set; } = null!;
-
     public string SellerId { get; set; } = null!;
+
+    public DateTime CreatedAt { get; set; } =
+        DateTime.UtcNow;
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public string? CreatedById { get; set; }
+
+    public string? UpdatedById { get; set; }
+
+    public bool IsDeleted { get; set; }
+
+    public DateTime? DeletedAt { get; set; }
+
+    public string? DeletedById { get; set; }
+
+    public Book Book { get; set; } = null!;
 
     public ApplicationUser Seller { get; set; } = null!;
 
