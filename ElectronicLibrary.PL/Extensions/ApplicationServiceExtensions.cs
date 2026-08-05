@@ -11,6 +11,8 @@ using ElectronicLibrary.BLL.Services.Sellers;
 using ElectronicLibrary.BLL.Services.UserManagement;
 using ElectronicLibrary.DAL.Repositories.Generic;
 using ElectronicLibrary.DAL.Repositories.UnitOfWork;
+using ElectronicLibrary.BLL.Interfaces.Marketplace;
+using ElectronicLibrary.BLL.Services.Marketplace;
 using Mapster;
 
 namespace ElectronicLibrary.PL.Extensions;
@@ -35,6 +37,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IBookService, BookService>();
 
         services.AddScoped<ISellerService, SellerService>();
+
+        services.AddScoped<IListingService, ListingService>();
 
         services.AddScoped<ITokenService, TokenService>();
 
