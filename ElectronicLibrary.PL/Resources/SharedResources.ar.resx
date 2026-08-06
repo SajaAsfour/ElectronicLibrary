@@ -374,4 +374,29 @@
 	<data name="PageSizeOutOfRange" xml:space="preserve">
   <value>يجب أن يكون حجم الصفحة بين 1 و50.</value>
 </data>
+
+  <data name="CartItemNotFound" xml:space="preserve">
+    <value>عنصر سلة التسوق المطلوب غير موجود.</value>
+  </data>
+  <data name="CartQuantityMustBeGreaterThanZero" xml:space="preserve">
+    <value>يجب أن تكون كمية عنصر سلة التسوق أكبر من صفر.</value>
+  </data>
+  <data name="ListingNotAvailable" xml:space="preserve">
+    <value>هذا العرض غير متاح حاليًا.</value>
+  </data>
+  <data name="InsufficientStock" xml:space="preserve">
+    <value>الكمية المطلوبة تتجاوز الكمية المتوفرة في المخزون.</value>
+  </data>
+  <data name="ListingIdMustBeGreaterThanZero" xml:space="preserve">
+    <value>يجب أن يكون رقم العرض أكبر من صفر.</value>
+  </data>
+  <data name="ListingBookNotAvailable" xml:space="preserve">
+    <value>الكتاب المرتبط بهذا العرض لم يعد متاحًا.</value>
+  </data>
+  <data name="ListingOutOfStock" xml:space="preserve">
+    <value>هذا العرض غير متوفر في المخزون.</value>
+  </data>
+  <data name="CartItemQuantityExceedsStock" xml:space="preserve">
+    <value>الكمية الموجودة في سلة التسوق تتجاوز الكمية المتوفرة حاليًا.</value>
+  </data>
 </root>
