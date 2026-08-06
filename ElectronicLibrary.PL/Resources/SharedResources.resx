@@ -356,4 +356,29 @@
 	<data name="PageSizeOutOfRange" xml:space="preserve">
   <value>Page size must be between 1 and 50.</value>
 </data>
+
+  <data name="CartItemNotFound" xml:space="preserve">
+    <value>The requested cart item was not found.</value>
+  </data>
+  <data name="CartQuantityMustBeGreaterThanZero" xml:space="preserve">
+    <value>Cart item quantity must be greater than zero.</value>
+  </data>
+  <data name="ListingNotAvailable" xml:space="preserve">
+    <value>This listing is not currently available.</value>
+  </data>
+  <data name="InsufficientStock" xml:space="preserve">
+    <value>The requested quantity exceeds the available stock.</value>
+  </data>
+  <data name="ListingIdMustBeGreaterThanZero" xml:space="preserve">
+    <value>Listing ID must be greater than zero.</value>
+  </data>
+  <data name="ListingBookNotAvailable" xml:space="preserve">
+    <value>The book associated with this listing is no longer available.</value>
+  </data>
+  <data name="ListingOutOfStock" xml:space="preserve">
+    <value>This listing is out of stock.</value>
+  </data>
+  <data name="CartItemQuantityExceedsStock" xml:space="preserve">
+    <value>The quantity in your cart exceeds the currently available stock.</value>
+  </data>
 </root>
