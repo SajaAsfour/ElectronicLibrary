@@ -507,6 +507,32 @@ public sealed class PublishersControllerTests
             scope.ServiceProvider
                 .GetRequiredService<ApplicationDbContext>();
 
+        await dbContext.CartItems
+            .ExecuteDeleteAsync();
+
+        await dbContext.OrderItems
+            .ExecuteDeleteAsync();
+
+        await dbContext.Reviews
+            .ExecuteDeleteAsync();
+
+        await dbContext.Listings
+            .IgnoreQueryFilters()
+            .ExecuteDeleteAsync();
+
+        await dbContext.BookImages
+            .ExecuteDeleteAsync();
+
+        await dbContext.BookAuthors
+            .ExecuteDeleteAsync();
+
+        await dbContext.BookCategories
+            .ExecuteDeleteAsync();
+
+        await dbContext.Books
+            .IgnoreQueryFilters()
+            .ExecuteDeleteAsync();
+
         await dbContext.Publishers
             .IgnoreQueryFilters()
             .ExecuteDeleteAsync();

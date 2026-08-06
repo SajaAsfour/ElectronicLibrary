@@ -24,6 +24,11 @@ public class ListingConfiguration
             .HasPrecision(5, 2);
 
         builder.Property(listing =>
+                listing.RowVersion)
+            .IsRowVersion()
+            .IsConcurrencyToken();
+
+        builder.Property(listing =>
                 listing.SellerId)
             .HasMaxLength(450)
             .IsRequired();

@@ -1,13 +1,10 @@
 ﻿using ElectronicLibrary.DAL.Enums;
-using ElectronicLibrary.DAL.Models.Marketplace;
 
-namespace ElectronicLibrary.DAL.Models.Orders;
+namespace ElectronicLibrary.DAL.DTOs.Responses.Orders;
 
-public class OrderItem
+public class OrderItemResponse
 {
     public int OrderItemId { get; set; }
-
-    public int OrderId { get; set; }
 
     public int ListingId { get; set; }
 
@@ -16,22 +13,15 @@ public class OrderItem
     public string SellerId { get; set; } =
         null!;
 
-    public string BookTitleSnapshot { get; set; } =
+    public string BookTitle { get; set; } =
         null!;
 
-    public string SellerStoreNameSnapshot
-    {
-        get;
-        set;
-    } = null!;
+    public string SellerStoreName { get; set; } =
+        null!;
 
-    public BookFormat FormatSnapshot { get; set; }
+    public BookFormat Format { get; set; }
 
-    public BookCondition? ConditionSnapshot
-    {
-        get;
-        set;
-    }
+    public BookCondition? Condition { get; set; }
 
     public int Quantity { get; set; }
 
@@ -55,10 +45,5 @@ public class OrderItem
 
     public decimal LineTotal { get; set; }
 
-    public OrderItemStatus Status { get; set; } =
-        OrderItemStatus.Pending;
-
-    public Order Order { get; set; } = null!;
-
-    public Listing Listing { get; set; } = null!;
+    public OrderItemStatus Status { get; set; }
 }

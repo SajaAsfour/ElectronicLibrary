@@ -381,4 +381,107 @@
   <data name="CartItemQuantityExceedsStock" xml:space="preserve">
     <value>The quantity in your cart exceeds the currently available stock.</value>
   </data>
+	<data name="CartIsEmpty" xml:space="preserve">
+  <value>The cart is empty.</value>
+</data>
+
+	<data name="CartNotFound" xml:space="preserve">
+  <value>The cart was not found.</value>
+</data>
+
+	<data name="CheckoutConcurrencyConflict" xml:space="preserve">
+  <value>The stock changed during checkout. Please review your cart and try again.</value>
+</data>
+
+	<data name="CouponExpired" xml:space="preserve">
+  <value>The coupon has expired.</value>
+</data>
+
+	<data name="CouponInactive" xml:space="preserve">
+  <value>The coupon is inactive.</value>
+</data>
+
+	<data name="CouponNotFound" xml:space="preserve">
+  <value>The coupon was not found.</value>
+</data>
+
+	<data name="CouponNotStarted" xml:space="preserve">
+  <value>The coupon is not valid yet.</value>
+</data>
+
+	<data name="DeliveredOrderCannotBeCancelled" xml:space="preserve">
+  <value>A delivered order cannot be cancelled.</value>
+</data>
+
+	<data name="InvalidCartItemQuantity" xml:space="preserve">
+  <value>The cart item quantity must be greater than zero.</value>
+</data>
+
+	<data name="InvalidCouponDiscount" xml:space="preserve">
+  <value>The coupon discount value is invalid.</value>
+</data>
+
+	<data name="InvalidListingDiscount" xml:space="preserve">
+  <value>The listing discount is invalid.</value>
+</data>
+
+	<data name="InvalidListingPrice" xml:space="preserve">
+  <value>The listing price is invalid.</value>
+</data>
+
+	<data name="InvalidOrderItemStatus" xml:space="preserve">
+  <value>The selected order item status is invalid.</value>
+</data>
+
+	<data name="InvalidOrderItemStatusTransition" xml:space="preserve">
+  <value>The requested order item status transition is not allowed.</value>
+</data>
+
+	<data name="ListingNotFound" xml:space="preserve">
+  <value>The listing was not found.</value>
+</data>
+
+	<data name="OrderAlreadyCancelled" xml:space="preserve">
+  <value>The order has already been cancelled.</value>
+</data>
+
+	<data name="OrderCancellationConcurrencyConflict" xml:space="preserve">
+  <value>The order or stock changed during cancellation. Please try again.</value>
+</data>
+
+	<data name="OrderCannotBeCancelled" xml:space="preserve">
+  <value>The order can no longer be cancelled.</value>
+</data>
+
+	<data name="OrderIdMustBeGreaterThanZero" xml:space="preserve">
+  <value>Order ID must be greater than zero.</value>
+</data>
+
+	<data name="OrderItemIdMustBeGreaterThanZero" xml:space="preserve">
+  <value>Order item ID must be greater than zero.</value>
+</data>
+
+	<data name="OrderItemNotFound" xml:space="preserve">
+  <value>The order item was not found.</value>
+</data>
+
+	<data name="OrderListingNotFound" xml:space="preserve">
+  <value>The listing associated with the order item was not found.</value>
+</data>
+
+	<data name="OrderNotFound" xml:space="preserve">
+  <value>The order was not found.</value>
+</data>
+
+	<data name="OrderStatusConcurrencyConflict" xml:space="preserve">
+  <value>The order status changed while processing the request. Please try again.</value>
+</data>
+
+	<data name="SellerProfileNotActivated" xml:space="preserve">
+  <value>The seller profile has not been activated.</value>
+</data>
+
+	<data name="UnsupportedCouponDiscountType" xml:space="preserve">
+  <value>The coupon discount type is not supported.</value>
+</data>
 </root>
