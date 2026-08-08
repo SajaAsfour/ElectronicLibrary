@@ -13,8 +13,10 @@ using ElectronicLibrary.DAL.Repositories.Generic;
 using ElectronicLibrary.DAL.Repositories.UnitOfWork;
 using ElectronicLibrary.BLL.Interfaces.Marketplace;
 using ElectronicLibrary.BLL.Interfaces.Shopping;
+using ElectronicLibrary.BLL.Interfaces.Orders;
 using ElectronicLibrary.BLL.Services.Marketplace;
 using ElectronicLibrary.BLL.Services.Shopping;
+using ElectronicLibrary.BLL.Services.Orders;
 using Mapster;
 
 namespace ElectronicLibrary.PL.Extensions;
@@ -43,6 +45,8 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IListingService, ListingService>();
 
         services.AddScoped<ICartService, CartService>();
+
+        services.AddScoped<IOrderService, OrderService>();
 
         services.AddScoped<ITokenService, TokenService>();
 

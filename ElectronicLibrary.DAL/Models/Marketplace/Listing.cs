@@ -22,6 +22,8 @@ public class Listing
 
     public ListingStatus Status { get; set; }
 
+    public byte[] RowVersion { get; set; } = [];
+
     public int BookId { get; set; }
 
     public string SellerId { get; set; } = null!;

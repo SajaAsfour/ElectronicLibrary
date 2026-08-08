@@ -399,4 +399,107 @@
   <data name="CartItemQuantityExceedsStock" xml:space="preserve">
     <value>الكمية الموجودة في سلة التسوق تتجاوز الكمية المتوفرة حاليًا.</value>
   </data>
+	<data name="CartIsEmpty" xml:space="preserve">
+  <value>سلة التسوق فارغة.</value>
+</data>
+
+	<data name="CartNotFound" xml:space="preserve">
+  <value>لم يتم العثور على سلة التسوق.</value>
+</data>
+
+	<data name="CheckoutConcurrencyConflict" xml:space="preserve">
+  <value>تغير المخزون أثناء إتمام الطلب. يرجى مراجعة السلة والمحاولة مرة أخرى.</value>
+</data>
+
+	<data name="CouponExpired" xml:space="preserve">
+  <value>انتهت صلاحية القسيمة.</value>
+</data>
+
+	<data name="CouponInactive" xml:space="preserve">
+  <value>القسيمة غير مفعلة.</value>
+</data>
+
+	<data name="CouponNotFound" xml:space="preserve">
+  <value>لم يتم العثور على القسيمة.</value>
+</data>
+
+	<data name="CouponNotStarted" xml:space="preserve">
+  <value>القسيمة غير صالحة للاستخدام بعد.</value>
+</data>
+
+	<data name="DeliveredOrderCannotBeCancelled" xml:space="preserve">
+  <value>لا يمكن إلغاء طلب تم تسليمه.</value>
+</data>
+
+	<data name="InvalidCartItemQuantity" xml:space="preserve">
+  <value>يجب أن تكون كمية عنصر السلة أكبر من صفر.</value>
+</data>
+
+	<data name="InvalidCouponDiscount" xml:space="preserve">
+  <value>قيمة خصم القسيمة غير صالحة.</value>
+</data>
+
+	<data name="InvalidListingDiscount" xml:space="preserve">
+  <value>خصم الإعلان غير صالح.</value>
+</data>
+
+	<data name="InvalidListingPrice" xml:space="preserve">
+  <value>سعر الإعلان غير صالح.</value>
+</data>
+
+	<data name="InvalidOrderItemStatus" xml:space="preserve">
+  <value>حالة عنصر الطلب المحددة غير صالحة.</value>
+</data>
+
+	<data name="InvalidOrderItemStatusTransition" xml:space="preserve">
+  <value>الانتقال المطلوب بين حالات عنصر الطلب غير مسموح.</value>
+</data>
+
+	<data name="ListingNotFound" xml:space="preserve">
+  <value>لم يتم العثور على الإعلان.</value>
+</data>
+
+	<data name="OrderAlreadyCancelled" xml:space="preserve">
+  <value>تم إلغاء الطلب مسبقًا.</value>
+</data>
+
+	<data name="OrderCancellationConcurrencyConflict" xml:space="preserve">
+  <value>تغير الطلب أو المخزون أثناء الإلغاء. يرجى المحاولة مرة أخرى.</value>
+</data>
+
+	<data name="OrderCannotBeCancelled" xml:space="preserve">
+  <value>لم يعد من الممكن إلغاء الطلب.</value>
+</data>
+
+	<data name="OrderIdMustBeGreaterThanZero" xml:space="preserve">
+  <value>يجب أن يكون رقم الطلب أكبر من صفر.</value>
+</data>
+
+	<data name="OrderItemIdMustBeGreaterThanZero" xml:space="preserve">
+  <value>يجب أن يكون رقم عنصر الطلب أكبر من صفر.</value>
+</data>
+
+	<data name="OrderItemNotFound" xml:space="preserve">
+  <value>لم يتم العثور على عنصر الطلب.</value>
+</data>
+
+	<data name="OrderListingNotFound" xml:space="preserve">
+  <value>لم يتم العثور على الإعلان المرتبط بعنصر الطلب.</value>
+</data>
+
+	<data name="OrderNotFound" xml:space="preserve">
+  <value>لم يتم العثور على الطلب.</value>
+</data>
+
+	<data name="OrderStatusConcurrencyConflict" xml:space="preserve">
+  <value>تغيرت حالة الطلب أثناء معالجة العملية. يرجى المحاولة مرة أخرى.</value>
+</data>
+
+	<data name="SellerProfileNotActivated" xml:space="preserve">
+  <value>لم يتم تفعيل ملف البائع.</value>
+</data>
+
+	<data name="UnsupportedCouponDiscountType" xml:space="preserve">
+  <value>نوع خصم القسيمة غير مدعوم.</value>
+</data>
 </root>
